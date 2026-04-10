@@ -1,0 +1,1 @@
+# Memory layer - Semantic search + Progressive disclosure

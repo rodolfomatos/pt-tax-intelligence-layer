@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: up-tax-intelligence-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PTDATA_API_KEY=${PTDATA_API_KEY}
+      - PTDATA_API_URL=${PTDATA_API_URL}
+      - IAEDU_API_KEY=${IAEDU_API_KEY}
+      - IAEDU_ENDPOINT=${IAEDU_ENDPOINT}
+      - IAEDU_CHANNEL_ID=${IAEDU_CHANNEL_ID}
+      - USE_IAEDU=${USE_IAEDU:-false}
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/tax_intelligence
+      - REDIS_URL=redis://cache:6379/0
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - RATE_LIMIT_PER_MINUTE=${RATE_LIMIT_PER_MINUTE:-60}
+      - RATE_LIMIT_PER_HOUR=${RATE_LIMIT_PER_HOUR:-1000}
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_started
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - tax-network
+
+  db:
+    container_name: up-tax-intelligence-db
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=tax_intelligence
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - tax-network
+
+  cache:
+    container_name: up-tax-intelligence-cache
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - tax-network
+
+networks:
+  tax-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
