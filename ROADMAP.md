@@ -16,7 +16,7 @@
 | /tax/decisions - falta total count | médio | baixo | done |
 | Rate limiting - pode bloquear API | médio | baixo | done |
 | Health endpoint não verifica DB | médio | baixo | done |
-| Legal citations hardcoded | alto | médio | todo |
+| Legal citations hardcoded | alto | médio | done |
 
 ### 🟡 Média Prioridade
 
@@ -25,7 +25,7 @@
 | Graph visualization - static criação automática | médio | médio | done |
 | Logging estruturado (JSON) | médio | baixo | done |
 | Error handling inconsistente | médio | baixo | done |
-| Testes de integração | médio | alto | todo |
+| Testes de integração | médio | alto | done |
 
 ### 🟢 Baixa Priorograma
 

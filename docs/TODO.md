@@ -13,14 +13,14 @@
 - [x] ptdata MCP client integration
 - [x] Legislation caching (Redis)
 - [x] Legal article retrieval
-- [ ] Semantic search support
-- [ ] Cache invalidation strategy
+- [x] Semantic search support
+- [x] Cache invalidation strategy
 
 ## Phase 3: Reasoning Layer ✓
 
 - [x] LLM integration (IAEDU/OpenAI/Ollama)
 - [x] Strict grounding prompt
-- [ ] Citation extraction
+- [x] Citation extraction
 - [x] Response validation
 
 ## Phase 4: Rule Engine ✓
@@ -36,6 +36,9 @@
 - [x] POST /tax/validate endpoint
 - [x] GET /tax/search endpoint
 - [x] GET /tax/article/{code}/{article}
+- [x] GET /dashboard/summary
+- [x] GET /dashboard/trends
+- [x] GET /internal/benchmark
 - [x] Input validation
 - [x] Error handling
 
@@ -50,9 +53,9 @@
 ## Phase 7: Integration ✓
 
 - [x] Docker Compose setup
-- [ ] Database migrations (Alembic)
-- [ ] Internal system hooks
-- [ ] Dashboard integration support
+- [x] Database migrations (Alembic)
+- [x] Internal system hooks
+- [x] Dashboard integration support
 - [x] Deployment configuration
 
 ## Phase 8: Quality ✓
@@ -60,7 +63,7 @@
 - [x] Unit tests
 - [x] Integration tests
 - [x] Documentation
-- [ ] Performance benchmarks
+- [x] Performance benchmarks
 - [ ] Security audit
 
 ## Priority Order

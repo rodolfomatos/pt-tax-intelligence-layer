@@ -5,7 +5,7 @@ from fastapi.exceptions import RequestValidationError
 import logging
 import time
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import get_settings
@@ -515,6 +515,104 @@ async def get_timeline(entity_external_id: str):
     except Exception as e:
         logger.error(f"Failed to get timeline: {e}")
         raise HTTPException(status_code=500, detail="Graph unavailable")
+
+
+# Dashboard Integration Endpoints
+
+@app.get("/dashboard/summary")
+async def get_dashboard_summary():
+    """
+    Dashboard summary - aggregated statistics for UI.
+    
+    Returns key metrics for dashboard display:
+    - Total decisions
+    - Decision breakdown
+    - Average confidence
+    - Recent activity
+    """
+    try:
+        from app.database.audit import get_audit_repository
+        from app.data.memory.semantic import get_semantic_memory
+        
+        audit = get_audit_repository()
+        stats = await audit.get_statistics()
+        
+        semantic = get_semantic_memory()
+        memory_count = semantic.count() if semantic else 0
+        
+        return {
+            "total_decisions": stats.get("total", 0),
+            "by_decision": stats.get("by_decision", {}),
+            "avg_confidence": stats.get("avg_confidence", 0),
+            "semantic_memories": memory_count,
+            "last_updated": datetime.utcnow().isoformat() + "Z",
+        }
+    except Exception as e:
+        logger.error(f"Failed to get dashboard summary: {e}")
+        raise HTTPException(status_code=500, detail="Dashboard unavailable")
+
+
+@app.get("/dashboard/trends")
+async def get_dashboard_trends(
+    days: int = Query(30, ge=1, le=365),
+):
+    """
+    Dashboard trends - decisions over time.
+    
+    Args:
+        days: Number of days to analyze (default 30)
+    """
+    try:
+        from app.database.audit import get_audit_repository
+        
+        audit = get_audit_repository()
+        start_date = datetime.utcnow() - timedelta(days=days)
+        
+        decisions = await audit.get_decisions(limit=1000, start_date=start_date)
+        
+        daily_counts = {}
+        for d in decisions:
+            date_key = d.created_at.date().isoformat()
+            daily_counts[date_key] = daily_counts.get(date_key, 0) + 1
+        
+        return {
+            "period_days": days,
+            "decisions": daily_counts,
+            "total": len(decisions),
+        }
+    except Exception as e:
+        logger.error(f"Failed to get trends: {e}")
+        raise HTTPException(status_code=500, detail="Trends unavailable")
+
+
+@app.get("/internal/benchmark")
+async def run_benchmark(
+    iterations: int = Query(10, ge=1, le=100),
+):
+    """
+    Run performance benchmark.
+    
+    Tests response times for key operations.
+    """
+    import time
+    
+    results = {}
+    ptdata = await get_ptdata_client()
+    cache = await get_cache_client()
+    
+    times_health = []
+    for _ in range(iterations):
+        start = time.time()
+        await ptdata.health_check()
+        times_health.append(time.time() - start)
+    
+    results["health_check"] = {
+        "avg_ms": sum(times_health) / len(times_health) * 1000,
+        "min_ms": min(times_health) * 1000,
+        "max_ms": max(times_health) * 1000,
+    }
+    
+    return {"benchmark": results, "iterations": iterations}
 
 
 # MCP Tools Endpoints

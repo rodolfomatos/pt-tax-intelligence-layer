@@ -1,4 +1,4 @@
-.PHONY: install run test lint format docker-build docker-up docker-down docker-logs docker-restart clean help git-status git-add git-commit git-push git-pull git-fetch git-branch git-log
+.PHONY: install run test lint format docker-build docker-up docker-down docker-logs docker-restart clean help git-status git-add git-commit git-push git-pull git-fetch git-branch git-log alembic-migrate alembic-rollback alembic-current
 
 PYTHON=python3
 PIP=pip
@@ -9,11 +9,11 @@ help:
 	@echo "UP Tax Intelligence Layer - Available Commands"
 	@echo ""
 	@echo "Development:"
-	@echo "  make install      - Install dependencies"
-	@echo "  make run          - Run the development server"
-	@echo "  make test         - Run tests"
-	@echo "  make lint         - Run linting"
-	@echo "  make format       - Format code"
+	@echo "  make install       - Install dependencies"
+	@echo "  make run           - Run the development server"
+	@echo "  make test          - Run tests"
+	@echo "  make lint          - Run linting"
+	@echo "  make format        - Format code"
 	@echo ""
 	@echo "Docker:"
 	@echo "  make docker-build - Build Docker images"
@@ -23,6 +23,11 @@ help:
 	@echo "  make docker-logs  - Show Docker logs (follow)"
 	@echo "  make shell        - Open shell in app container"
 	@echo "  make db           - Open psql in database container"
+	@echo ""
+	@echo "Database Migrations:"
+	@echo "  make alembic-migrate    - Run pending migrations"
+	@echo "  make alembic-rollback   - Rollback last migration"
+	@echo "  make alembic-current - Show current migration"
 	@echo ""
 	@echo "Git:"
 	@echo "  make git-status   - Show working tree status"
@@ -139,3 +144,13 @@ git-branch:
 
 git-log:
 	git log --oneline -10
+
+# Database Migrations
+alembic-migrate:
+	alembic upgrade head
+
+alembic-rollback:
+	alembic downgrade -1
+
+alembic-current:
+	alembic current

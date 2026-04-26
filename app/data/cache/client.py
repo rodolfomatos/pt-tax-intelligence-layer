@@ -1,6 +1,7 @@
 import json
 import logging
 from typing import Optional
+from datetime import datetime
 import redis.asyncio as redis
 from app.config import get_settings
 
@@ -9,11 +10,20 @@ settings = get_settings()
 
 
 class CacheClient:
-    """Redis cache for legislation and API responses."""
+    """
+    Redis cache for legislation and API responses.
+    
+    Supports:
+    - TTL-based expiration (default)
+    - Manual invalidation
+    - Event-based invalidation (legal version changes)
+    - Pattern-based bulk invalidation
+    """
     
     def __init__(self, url: Optional[str] = None):
         self.url = url or settings.redis_url
         self._client: Optional[redis.Redis] = None
+        self._version_key = "legal:version:current"
     
     async def _get_client(self) -> redis.Redis:
         if self._client is None:
@@ -82,6 +92,77 @@ class CacheClient:
             return True
         except redis.RedisError:
             return False
+    
+    async def invalidate_article(self, code: str, article: str):
+        """Invalidate a specific article cache."""
+        key = f"article:{code}:{article}"
+        await self.delete(key)
+        logger.info(f"Invalidated article cache: {code}/{article}")
+    
+    async def invalidate_search(self, query: str, code: Optional[str] = None):
+        """Invalidate a specific search cache."""
+        code_part = code or ""
+        key = f"search:{query}:{code_part}"
+        await self.delete(key)
+        logger.info(f"Invalidated search cache: {query}")
+    
+    async def invalidate_by_pattern(self, pattern: str):
+        """
+        Invalidate all keys matching a pattern.
+        
+        Args:
+            pattern: e.g., "article:CIVA:*" or "search:*"
+        """
+        try:
+            client = await self._get_client()
+            cursor = 0
+            deleted = 0
+            while True:
+                cursor, keys = await client.scan(
+                    cursor=cursor,
+                    match=pattern,
+                    count=100
+                )
+                if keys:
+                    await client.delete(*keys)
+                    deleted += len(keys)
+                if cursor == 0:
+                    break
+            logger.info(f"Invalidated {deleted} keys matching: {pattern}")
+            return deleted
+        except redis.RedisError as e:
+            logger.warning(f"Pattern invalidation failed: {e}")
+            return 0
+    
+    async def invalidate_legal_version(self, old_version: str, new_version: str):
+        """
+        Invalidate all cache when legal version changes.
+        
+        Called when ptdata API reports new legal version.
+        """
+        if old_version == new_version:
+            return
+        
+        logger.info(f"Legal version changed: {old_version} -> {new_version}")
+        
+        await self.invalidate_by_pattern("article:*")
+        await self.invalidate_by_pattern("search:*")
+        
+        await self.set(self._version_key, {"version": new_version, "updated": datetime.utcnow().isoformat()})
+    
+    async def get_legal_version(self) -> Optional[str]:
+        """Get cached legal version."""
+        data = await self.get(self._version_key)
+        return data.get("version") if data else None
+    
+    async def invalidate_all(self):
+        """Clear all cache (use with caution)."""
+        try:
+            client = await self._get_client()
+            await client.flushdb()
+            logger.warning("All cache cleared")
+        except redis.RedisError as e:
+            logger.warning(f"Cache clear failed: {e}")
 
 
 _cache: Optional[CacheClient] = None
