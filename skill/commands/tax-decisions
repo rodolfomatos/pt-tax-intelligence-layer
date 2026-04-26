@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+"""
+Tax Decisions Command Shim
+
+Lists past tax decisions.
+"""
+import sys
+import json
+import os
+import httpx
+
+API_URL = os.getenv("UP_TAX_API_URL", "http://localhost:8000")
+
+def main():
+    try:
+        input_data = json.loads(sys.stdin.read())
+    except json.JSONDecodeError:
+        input_data = {}
+    
+    params = {
+        "limit": input_data.get("limit", 100),
+        "offset": input_data.get("offset", 0),
+    }
+    if input_data.get("decision_type"):
+        params["decision_type"] = input_data["decision_type"]
+    if input_data.get("entity_type"):
+        params["entity_type"] = input_data["entity_type"]
+    
+    try:
+        response = httpx.get(f"{API_URL}/tax/decisions", params=params, timeout=30)
+        response.raise_for_status()
+        print(json.dumps(response.json()))
+    except httpx.HTTPError as e:
+        print(json.dumps({"error": str(e)}))
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()

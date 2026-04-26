@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+"""
+Dashboard Summary Command Shim
+
+Gets aggregated dashboard statistics.
+"""
+import sys
+import json
+import os
+import httpx
+
+API_URL = os.getenv("UP_TAX_API_URL", "http://localhost:8000")
+
+def main():
+    try:
+        response = httpx.get(f"{API_URL}/dashboard/summary", timeout=30)
+        response.raise_for_status()
+        print(json.dumps(response.json()))
+    except httpx.HTTPError as e:
+        print(json.dumps({"error": str(e)}))
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
