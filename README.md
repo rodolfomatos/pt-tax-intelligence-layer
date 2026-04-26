@@ -209,6 +209,46 @@ make docs       # Generate documentation
 - **Alembic** - Migrations
 - **Docker** - Containerization
 
+## Integration with AI Agents
+
+This project includes **two** ways to integrate with Claude Code, OpenCode, and other AI agents:
+
+### Option A: Command Shims (skill/)
+
+Lightweight command shims that call the API. For use in Claude Code/OpenCode without MCP.
+
+```bash
+# Install as skill
+git clone https://github.com/rodolfomatos/up-tax-intelligence-layer.git
+ln -s up-tax-intelligence-layer/skill ~/.claude/skills/up-tax-intelligence
+```
+
+Commands available:
+- `tax-analyze` - Analyze tax operation
+- `tax-validate` - Validate decision
+- `tax-search` - Search legislation
+- `tax-decisions` - List decisions
+- `dashboard-summary` - Dashboard stats
+
+### Option B: MCP Server (mcp/)
+
+Full MCP server protocol integration. Works with Claude Desktop, Claude Code, Cursor.
+
+```bash
+# Install MCP server
+cd mcp
+pip install -e .
+
+# Configure in your MCP client
+python src/server.py
+```
+
+Tools available: `tax_analyze`, `tax_validate`, `tax_search`, `tax_decisions`, `dashboard_summary`, `health_check`
+
+Both options require the API to be running (`make docker-up` or `make run`).
+
+See `skill/` and `mcp/` directories for details.
+
 ## License
 
 MIT
