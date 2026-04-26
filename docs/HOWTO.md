@@ -92,6 +92,9 @@ CACHE_TTL_SECONDS=86400
 RATE_LIMIT_PER_MINUTE=60
 RATE_LIMIT_PER_HOUR=1000
 
+# === API Security (opcional) ===
+API_KEY=your-secure-api-key
+
 # === Logging ===
 LOG_LEVEL=INFO
 ```
@@ -267,7 +270,8 @@ curl "http://localhost:8000/tax/decisions?limit=10&offset=0"
     }
   ],
   "limit": 10,
-  "offset": 0
+  "offset": 0,
+  "total": 150
 }
 ```
 
@@ -291,9 +295,89 @@ curl http://localhost:8000/tax/statistics
 }
 ```
 
+### 4.8 MCP Tools (Pesquisa Externa)
+
+```bash
+# Listar ferramentas disponíveis
+curl http://localhost:8000/mcp/tools
+```
+
+**Response:**
+```json
+{
+  "tools": [
+    {
+      "type": "legislation_search",
+      "description": "Search Portuguese tax legislation",
+      "parameters": {"query": {...}}
+    },
+    {
+      "type": "jurisprudence_search",
+      "description": "Search tax jurisprudence",
+      "parameters": {...}
+    }
+  ]
+}
+```
+
+```bash
+# Executar uma ferramenta
+curl -X POST http://localhost:8000/mcp/execute \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tool_name": "search_legislation",
+    "parameters": {"query": "IVA deduction", "code": "CIVA", "limit": 5}
+  }'
+```
+
+### 4.9 Knowledge Graph
+
+```bash
+# Estatísticas do grafo
+curl http://localhost:8000/tax/graph/stats
+
+# Resumo GMIF
+curl http://localhost:8000/tax/graph/gmif-summary
+
+# Contradições detectadas
+curl http://localhost:8000/tax/graph/contradictions
+```
+
+### 4.10 Prometheus Metrics
+
+```bash
+curl http://localhost:8000/metrics
+```
+
+Retorna métricas no formato Prometheus para monitoramento.
+
 ---
 
-## 5. Testes
+## 5. Autenticação
+
+### API Key (se configurada)
+
+```bash
+# Com autenticação
+curl -X POST http://localhost:8000/tax/analyze \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{...}'
+```
+
+### Rate Limiting Headers
+
+Os headers indicam os limites:
+
+```bash
+X-RateLimit-Limit-Per-Minute: 60
+X-RateLimit-Remaining-Per-Minute: 45
+X-RateLimit-Reset-Per-Minute: 1704067200
+```
+
+---
+
+## 6. Testes
 
 ### Executar Testes
 
