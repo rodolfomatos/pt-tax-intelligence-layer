@@ -6,7 +6,21 @@ logger = logging.getLogger(__name__)
 
 
 class RuleEngine:
-    """Deterministic rule engine for tax decisions."""
+    """
+    Deterministic rule engine for tax decisions.
+    
+    Evaluates tax analysis requests against a set of deterministic rules
+    based on Portuguese tax law (CIVA, CIRC). Rules take precedence
+    over LLM reasoning as they represent unambiguous legal provisions.
+    
+    Rule hierarchy:
+    1. VAT deduction rules (expense/invoice operations)
+    2. Asset classification rules (asset operations)
+    3. Contract rules (contract operations)
+    
+    Each rule returns a TaxAnalysisOutput with the decision and legal basis.
+    Returns None if no rule matches (falls through to LLM).
+    """
     
     def evaluate(
         self,

@@ -109,6 +109,31 @@ class AuditRepository:
             result = await session.execute(query)
             return list(result.scalars().all())
     
+    async def get_decisions_count(
+        self,
+        decision_type: Optional[str] = None,
+        entity_type: Optional[str] = None,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+    ) -> int:
+        """Get total count of decisions matching filters."""
+        
+        async with get_db_session() as session:
+            from sqlalchemy import func
+            query = select(func.count(TaxDecision.id))
+            
+            if decision_type:
+                query = query.where(TaxDecision.decision == decision_type)
+            if entity_type:
+                query = query.where(TaxDecision.entity_type == entity_type)
+            if start_date:
+                query = query.where(TaxDecision.created_at >= start_date)
+            if end_date:
+                query = query.where(TaxDecision.created_at <= end_date)
+            
+            result = await session.execute(query)
+            return result.scalar() or 0
+    
     async def get_decision_by_id(self, decision_id: str) -> Optional[TaxDecision]:
         """Get a specific decision by ID."""
         

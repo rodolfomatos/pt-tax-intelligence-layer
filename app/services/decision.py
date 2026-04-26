@@ -7,7 +7,17 @@ logger = logging.getLogger(__name__)
 
 
 class DecisionAggregator:
-    """Aggregates results from Rule Engine and LLM."""
+    """
+    Aggregates results from Rule Engine and LLM.
+    
+    Combines decision results from both sources to produce a final output:
+    - Priority 1: Rule engine result (deterministic, legally grounded)
+    - Priority 2: LLM result (with validation checks)
+    - Fallback: uncertain result if no sources available
+    
+    Includes automatic confidence downgrading if legal basis is insufficient
+    and adds required disclaimer to all explanations.
+    """
     
     DISCLAIMER = "This is a preliminary automated assessment. Validate with financial or legal services."
     

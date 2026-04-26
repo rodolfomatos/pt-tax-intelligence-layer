@@ -12,6 +12,7 @@ from app.models import (
     TaxValidationInput, TaxValidationOutput,
     HealthResponse,
     Context,
+    MCPExecuteInput,
 )
 from app.services.rules.engine import get_rule_engine
 from app.services.reasoning import get_llm_reasoning
@@ -21,6 +22,7 @@ from app.data.cache.client import get_cache_client
 from app.database.audit import get_audit_repository
 from app.database.session import init_db, close_db
 from app.middleware.rate_limit import RateLimitMiddleware
+from app.middleware.api_auth import APIKeyMiddleware
 from app.data.memory.graph.visualization import router as graph_viz_router
 
 settings = get_settings()
@@ -66,11 +68,20 @@ app.add_middleware(
     burst_limit=settings.rate_limit_burst,
 )
 
+if settings.api_key:
+    app.add_middleware(APIKeyMiddleware)
+
 app.include_router(graph_viz_router)
 
 
 @app.get("/health", response_model=HealthResponse)
 async def health_check():
+    """
+    Health check endpoint.
+    
+    Verifies connectivity to ptdata API and Redis cache.
+    Returns overall system status and dependency states.
+    """
     ptdata = await get_ptdata_client()
     cache = await get_cache_client()
     
@@ -90,6 +101,23 @@ async def health_check():
 
 @app.post("/tax/analyze", response_model=TaxAnalysisOutput)
 async def analyze_tax(input: TaxAnalysisInput, request: Request):
+    """
+    Main tax analysis endpoint.
+    
+    Processes a tax analysis request through the decision pipeline:
+    1. Rule engine (deterministic) - tries to match against known rules
+    2. LLM reasoning - if no clear rule match, uses AI for analysis
+    3. Decision aggregator - combines results and produces final decision
+    
+    All decisions are logged for auditability and stored in semantic memory.
+    
+    Args:
+        input: TaxAnalysisInput with operation details
+        request: FastAPI request for headers (X-Request-ID, X-User)
+    
+    Returns:
+        TaxAnalysisOutput with decision, confidence, legal basis, and risks
+    """
     start_time = time.time()
     request_id = request.headers.get("X-Request-ID", "unknown")
     
@@ -196,6 +224,21 @@ async def analyze_tax(input: TaxAnalysisInput, request: Request):
 
 @app.post("/tax/validate", response_model=TaxValidationOutput)
 async def validate_tax(input: TaxValidationInput, request: Request):
+    """
+    Validate an existing decision for consistency.
+    
+    Performs consistency checks on a decision:
+    - High confidence but limited legal basis → warning
+    - Uncertain decision with high confidence → warning
+    - High risk with low confidence → note
+    - Missing legal citation fields → warning
+    
+    Args:
+        input: TaxValidationInput with decision to validate
+    
+    Returns:
+        TaxValidationOutput with validation results
+    """
     notes = []
     warnings = []
     
@@ -227,13 +270,33 @@ async def get_decisions(
     decision_type: Optional[str] = Query(None, description="Filter by decision type"),
     entity_type: Optional[str] = Query(None, description="Filter by entity type"),
 ):
-    """Get past decisions with filters."""
+    """
+    Get past decisions with pagination and optional filters.
+    
+    Retrieves historical tax decisions with support for:
+    - Pagination via limit/offset
+    - Filtering by decision type (deductible, non_deductible, etc.)
+    - Filtering by entity type (university, researcher, etc.)
+    
+    Args:
+        limit: Maximum number of results (1-500)
+        offset: Number of results to skip
+        decision_type: Filter by decision type
+        entity_type: Filter by entity type
+    
+    Returns:
+        Dict with decisions list, limit, offset, and total count
+    """
     
     try:
         audit = get_audit_repository()
         decisions = await audit.get_decisions(
             limit=limit,
             offset=offset,
+            decision_type=decision_type,
+            entity_type=entity_type,
+        )
+        total = await audit.get_decisions_count(
             decision_type=decision_type,
             entity_type=entity_type,
         )
@@ -255,6 +318,7 @@ async def get_decisions(
             ],
             "limit": limit,
             "offset": offset,
+            "total": total,
         }
     except Exception as e:
         logger.error(f"Failed to get decisions: {e}")
@@ -393,12 +457,22 @@ async def list_mcp_tools():
     return {"tools": registry.list_tools()}
 
 
-@app.post("/mcp/execute")
-async def execute_mcp_tool(tool_name: str, parameters: dict):
-    """Execute an MCP tool with given parameters."""
+@app.post("/mcp/execute", response_model=dict)
+async def execute_mcp_tool(input: MCPExecuteInput):
+    """
+    Execute an MCP tool with given parameters.
+    
+    Validates input using Pydantic model and executes the tool.
+    
+    Args:
+        input: MCPExecuteInput with tool_name and parameters
+    
+    Returns:
+        Tool execution result or error
+    """
     from app.data.mcp.executor import get_mcp_executor
     executor = get_mcp_executor()
-    result = await executor.execute(tool_name, parameters)
+    result = await executor.execute(input.tool_name, input.parameters)
     return result
 
 

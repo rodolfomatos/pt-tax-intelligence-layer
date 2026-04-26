@@ -3,12 +3,14 @@ from typing import Optional, Literal
 
 
 class Context(BaseModel):
+    """Tax analysis context with project and activity details."""
     project_type: Literal["FCT", "Horizon", "internal", "other"] = "internal"
     activity_type: Literal["taxable", "exempt", "mixed"] = "taxable"
     location: Literal["PT", "EU", "non-EU"] = "PT"
 
 
 class TaxAnalysisInput(BaseModel):
+    """Input for tax analysis."""
     operation_type: Literal["expense", "invoice", "asset", "contract"]
     description: str
     amount: float = Field(gt=0)
@@ -59,3 +61,9 @@ class HealthResponse(BaseModel):
     status: str
     version: str
     dependencies: dict
+
+
+class MCPExecuteInput(BaseModel):
+    """Input for MCP tool execution."""
+    tool_name: str = Field(..., description="Name of the MCP tool to execute")
+    parameters: dict = Field(default_factory=dict, description="Tool parameters")

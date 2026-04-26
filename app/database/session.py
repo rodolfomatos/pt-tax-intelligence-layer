@@ -12,6 +12,16 @@ async_session_maker = None
 
 
 def get_engine():
+    """
+    Get or create SQLAlchemy async engine.
+    
+    Creates a new async engine connecting to PostgreSQL if not already created.
+    Uses connection pooling (pool_size=10, max_overflow=20) for concurrent requests.
+    Replaces postgresql:// prefix with postgresql+asyncpg:// for async driver.
+    
+    Returns:
+        SQLAlchemy AsyncEngine instance
+    """
     global engine
     if engine is None:
         db_url = settings.database_url.replace("postgresql://", "postgresql+asyncpg://")
