@@ -10,21 +10,21 @@
 
 | Item | Impacto | Esforço | Estado |
 |-----|--------|---------|--------|
-| API authentication missing | alto | alto | todo |
-| Add docstrings a funções complexas | alto | médio | todo |
-| MCP execute endpoint - body validation | médio | baixo | todo |
-| /tax/decisions - falta total count | médio | baixo | todo |
-| Rate limiting - pode bloquear API | médio | baixo | todo |
-| health endpoint não verifica DB | médio | baixo | todo |
+| API authentication missing | alto | alto | done |
+| Add docstrings a funções complexas | alto | médio | done |
+| MCP execute endpoint - body validation | médio | baixo | done |
+| /tax/decisions - falta total count | médio | baixo | done |
+| Rate limiting - pode bloquear API | médio | baixo | done |
+| Health endpoint não verifica DB | médio | baixo | done |
 | Legal citations hardcoded | alto | médio | todo |
 
 ### 🟡 Média Prioridade
 
 | Item | Impacto | Esforço | Estado |
 |-----|--------|---------|--------|
-| Graph visualization - static criação automática | médio | médio | todo |
-| Logging estruturado (JSON) | médio | baixo | todo |
-| Error handling inconsistente | médio | baixo | todo |
+| Graph visualization - static criação automática | médio | médio | done |
+| Logging estruturado (JSON) | médio | baixo | done |
+| Error handling inconsistente | médio | baixo | done |
 | Testes de integração | médio | alto | todo |
 
 ### 🟢 Baixa Priorograma
@@ -32,7 +32,7 @@
 | Item | Impacto | Esforço | Estado |
 |-----|--------|---------|--------|
 | Métricas Prometheus | baixo | médio | todo |
-| OpenAPI docs | baixo | baixo | todo |
+| OpenAPI docs | baixo | baixo | done |
 | Docker multi-stage | baixo | baixo | done |
 
 ---
