@@ -241,6 +241,19 @@ class RuleEngine:
 
 
 _rule_engine: Optional[RuleEngine] = None
+_version_timestamp: str = "2024-01-01T00:00:00Z"
+
+
+async def get_legal_version() -> str:
+    """Get current legal version timestamp from ptdata API."""
+    global _version_timestamp
+    try:
+        from app.services.legal_citations import get_citation_service
+        service = get_citation_service()
+        _version_timestamp = await service.get_current_version()
+    except Exception:
+        pass
+    return _version_timestamp
 
 
 def get_rule_engine() -> RuleEngine:

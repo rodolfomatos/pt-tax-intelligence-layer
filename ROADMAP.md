@@ -31,9 +31,11 @@
 
 | Item | Impacto | Esforço | Estado |
 |-----|--------|---------|--------|
-| Métricas Prometheus | baixo | médio | todo |
+| Métricas Prometheus | baixo | médio | done |
 | OpenAPI docs | baixo | baixo | done |
 | Docker multi-stage | baixo | baixo | done |
+| Legal citations from ptdata | alto | médio | done (service) |
+| Testes de integração | médio | alto | done (test file) |
 
 ---
 

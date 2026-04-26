@@ -71,6 +71,9 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+from app.middleware.metrics import setup_metrics
+setup_metrics(app)
+
 app.add_middleware(
     RateLimitMiddleware,
     requests_per_minute=settings.rate_limit_per_minute,
