@@ -10,7 +10,6 @@ Inspired by Claude-Mem:
 
 import logging
 from typing import Optional, List, Dict
-from datetime import datetime
 from app.data.memory.semantic import get_semantic_memory
 
 logger = logging.getLogger(__name__)

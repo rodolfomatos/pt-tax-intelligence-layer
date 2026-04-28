@@ -2,9 +2,8 @@
 
 import os
 from alembic import context
-from alembic.env import include_object
-from sqlalchemy import create_engine, pool
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncConnection
+from sqlalchemy import pool
+from sqlalchemy.ext.asyncio import create_async_engine
 
 # Alembic Config object
 config = context.config

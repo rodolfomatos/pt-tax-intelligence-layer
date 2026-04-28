@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional, Any
 from uuid import uuid4
-from sqlalchemy import String, Text, DateTime, Float, JSON, Index, Enum as SQLEnum, Integer
+from sqlalchemy import String, Text, DateTime, Float, Index, Integer
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 import sys

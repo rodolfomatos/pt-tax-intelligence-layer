@@ -102,7 +102,6 @@ def mock_ptdata(monkeypatch):
         async def close(self, *args, **kwargs):
             await mock_close()
 
-    from app.data.ptdata import _client
 
     monkeypatch.setattr("app.data.ptdata._client", MockPTData())
     monkeypatch.setattr("app.data.ptdata.get_ptdata_client", lambda: MockPTData())

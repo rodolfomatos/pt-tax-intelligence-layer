@@ -7,7 +7,6 @@ from app.models import TaxAnalysisInput, TaxAnalysisOutput, LegalCitation
 from app.data.ptdata.client import get_ptdata_client
 from app.data.iaedu.client import get_iaedu_client
 from app.data.memory.layers import get_memory_layers
-from app.data.memory.hooks import DecisionHooks
 
 logger = logging.getLogger(__name__)
 settings = get_settings()

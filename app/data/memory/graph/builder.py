@@ -7,9 +7,8 @@ Builds graph from tax decisions with GMIF classification.
 import logging
 from typing import Optional, List, Dict
 from uuid import uuid4
-from datetime import datetime
-from app.data.memory.graph.models import GraphNode, GraphEdge, Contradiction
-from app.data.memory.graph.gmif import get_gmif_classifier, GMIFType
+from app.data.memory.graph.models import GraphNode, GraphEdge
+from app.data.memory.graph.gmif import get_gmif_classifier
 from app.database.session import get_db_session
 
 logger = logging.getLogger(__name__)

@@ -22,7 +22,6 @@ except ImportError:
 
     subprocess.check_call([sys.executable, "-m", "pip", "install", "mcp", "httpx"])
     from mcp.server import Server
-    from mcp.server.stdio import stdio_server
     from mcp.types import Tool, TextContent
     import httpx
 

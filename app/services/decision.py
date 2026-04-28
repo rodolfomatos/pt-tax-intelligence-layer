@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 from typing import Optional
-from app.models import TaxAnalysisInput, TaxAnalysisOutput, LegalCitation
+from app.models import TaxAnalysisInput, TaxAnalysisOutput
 
 logger = logging.getLogger(__name__)
 

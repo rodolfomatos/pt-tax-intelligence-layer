@@ -4,14 +4,12 @@ Graph Visualization Module
 Provides endpoints and static files for visualizing the knowledge graph.
 """
 
-import json
 import logging
 from pathlib import Path
 from typing import Optional, Dict, Any
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import FileResponse
 from app.data.memory.graph.query import get_graph_query
-from app.data.memory.graph.models import GraphNode, GraphEdge
 
 logger = logging.getLogger(__name__)
 

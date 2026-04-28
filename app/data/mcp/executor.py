@@ -4,7 +4,7 @@ MCP Tool Executor
 Executes MCP tool calls by delegating to appropriate services.
 """
 
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any
 import logging
 from app.data.ptdata.client import get_ptdata_client
 from app.data.cache.client import get_cache_client

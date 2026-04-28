@@ -3,7 +3,6 @@ from datetime import datetime
 from uuid import uuid4
 from typing import Optional
 from sqlalchemy import select, desc
-from sqlalchemy.ext.asyncio import AsyncSession
 from app.database.models import TaxDecision, AuditLog
 from app.database.session import get_db_session
 from app.models import TaxAnalysisInput, TaxAnalysisOutput

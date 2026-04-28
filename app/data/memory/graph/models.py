@@ -5,9 +5,9 @@ Based on GMIF classification system.
 """
 
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional
 from uuid import uuid4
-from sqlalchemy import String, Text, DateTime, Float, JSON, Index, Integer, ForeignKey
+from sqlalchemy import String, Text, DateTime, Float, Index, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 

@@ -6,7 +6,6 @@ Exposes request counts, latencies, and error rates.
 
 import time
 import logging
-from typing import Optional
 from fastapi import FastAPI, Request
 from starlette.responses import Response
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST

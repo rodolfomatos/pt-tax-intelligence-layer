@@ -4,9 +4,8 @@ Graph and GMIF router.
 Contains endpoints for knowledge graph, GMIF classification, and visualization.
 """
 
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, HTTPException
 from typing import Optional
-from datetime import datetime
 
 from app.data.memory.graph.builder import get_graph_builder
 from app.data.memory.graph.gmif import get_gmif_classifier

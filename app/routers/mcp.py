@@ -4,7 +4,7 @@ MCP tools router.
 Contains MCP tool listing, execution, and related endpoints.
 """
 
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, HTTPException
 from app.models import MCPExecuteInput
 from app.data.mcp.tools import get_mcp_registry
 from app.data.mcp.executor import get_mcp_executor

@@ -6,13 +6,10 @@ Refactored to use routers for better maintainability.
 """
 
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 import logging
-import time
-from typing import Optional
-from datetime import datetime, timedelta
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import get_settings

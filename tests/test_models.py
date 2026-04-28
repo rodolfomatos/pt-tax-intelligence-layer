@@ -1,8 +1,7 @@
 import pytest
 from pydantic import ValidationError
 from app.models import (
-    TaxAnalysisInput, TaxAnalysisOutput, TaxValidationInput,
-    Context, LegalCitation, HealthResponse,
+    TaxAnalysisInput, TaxAnalysisOutput, Context, LegalCitation,
 )
 
 

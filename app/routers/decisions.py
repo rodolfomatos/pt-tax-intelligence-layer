@@ -5,11 +5,10 @@ Contains endpoints for listing, searching, and retrieving decisions.
 """
 
 from fastapi import APIRouter, Query, HTTPException
-from typing import Optional, List
+from typing import Optional
 from datetime import datetime
 
 from app.database.audit import get_audit_repository
-from app.models import TaxAnalysisOutput
 import logging
 
 logger = logging.getLogger(__name__)

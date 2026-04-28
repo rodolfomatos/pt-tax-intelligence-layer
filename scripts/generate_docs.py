@@ -6,11 +6,9 @@ Extracts endpoints, models, and updates documentation from code.
 Run with: python scripts/generate_docs.py
 """
 
-import os
 import re
 import json
 from pathlib import Path
-from datetime import datetime
 
 ROOT = Path(__file__).parent.parent
 DOCS = ROOT / "docs"

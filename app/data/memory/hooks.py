@@ -8,7 +8,7 @@ Inspirado em Claude-Mem:
 """
 
 import logging
-from typing import Optional, Callable
+from typing import Callable
 from datetime import datetime
 from functools import wraps
 
