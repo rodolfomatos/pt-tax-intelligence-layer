@@ -20,7 +20,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app/ ./app/
 COPY scripts/ ./scripts/
 COPY docs/ ./docs/
-COPY pyproject.toml pytest.ini . 2>/dev/null || true
+        COPY pytest.ini . 2>/dev/null || true
 
 ENV PYTHONPATH=/app
 ENV PYTHONDONTWRITEBYTECODE=1
