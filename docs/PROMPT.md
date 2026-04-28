@@ -4,7 +4,7 @@
 
 Design and implement a backend service called:
 
-"UP Tax Intelligence Layer"
+"PT Tax Intelligence Layer"
 
 This is NOT a chatbot.
 This is a decision engine that provides structured, legally grounded tax analysis using Portuguese tax law via API (ptdata MCP).

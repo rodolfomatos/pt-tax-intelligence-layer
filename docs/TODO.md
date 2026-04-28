@@ -1,4 +1,4 @@
-# TODO — UP Tax Intelligence Layer
+# TODO — PT Tax Intelligence Layer
 
 ## Phase 1: Core Foundation ✓
 

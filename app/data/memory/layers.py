@@ -27,7 +27,7 @@ class MemoryLayers:
     """
     
     # Layer 0 - Identity (always loaded)
-    L0_IDENTITY = """Eres UP Tax Intelligence Layer, un sistema de apoyo a decisiones fiscales.
+    L0_IDENTITY = """Eres PT Tax Intelligence Layer, un sistema de apoyo a decisiones fiscales.
 Función: Analizar operaciones y proporcionar decisiones fiscales estructuradas basadas en legislación portuguesa.
 Principio: Si no hay base legal → decisión "uncertain"."""
     

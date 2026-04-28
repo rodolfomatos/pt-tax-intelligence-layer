@@ -150,7 +150,7 @@ def create_static_files():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UP Tax Intelligence - Knowledge Graph</title>
+    <title>PT Tax Intelligence - Knowledge Graph</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -198,7 +198,7 @@ def create_static_files():
 </head>
 <body>
     <header>
-        <h1>Knowledge Graph - UP Tax Intelligence</h1>
+        <h1>Knowledge Graph - PT Tax Intelligence</h1>
         <span>Epistemic Memory Layer</span>
     </header>
     <div class="container">

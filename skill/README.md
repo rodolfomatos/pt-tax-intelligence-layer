@@ -1,21 +1,21 @@
-# UP Tax Intelligence Skill
+# PT Tax Intelligence Skill
 
-Command shims for the UP Tax Intelligence Layer API.
+Command shims for the PT Tax Intelligence Layer API.
 
 ## Installation
 
 ```bash
 # Clone to your Claude Code skills directory
-git clone https://github.com/rodolfomatos/up-tax-intelligence-skill.git ~/.claude/skills/up-tax-intelligence
+git clone https://github.com/rodolfomatos/pt-tax-intelligence-skill.git ~/.claude/skills/pt-tax-intelligence
 
 # Or create a symlink to this repo
-ln -s /path/to/pt-tax-intelligence-layer/skill ~/.claude/skills/up-tax-intelligence
+ln -s /path/to/pt-tax-intelligence-layer/skill ~/.claude/skills/pt-tax-intelligence
 ```
 
 ## Requirements
 
 - Python 3.10+
-- UP Tax Intelligence API running (http://localhost:8000)
+- PT Tax Intelligence API running (http://localhost:8000)
 - Dependencies: `pip install -r requirements.txt`
 
 ## Configuration

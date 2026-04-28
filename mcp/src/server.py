@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-UP Tax Intelligence MCP Server
+PT Tax Intelligence MCP Server
 
 Provides tax analysis tools via MCP (Model Context Protocol).
 Can run as stdio server or HTTP server.
@@ -26,11 +26,11 @@ except ImportError:
 
 API_URL = os.getenv("PT_TAX_API_URL", "http://localhost:8000")
 
-server = Server("up-tax-intelligence")
+server = Server("pt-tax-intelligence")
 
 
 def call_api(endpoint: str, data: Optional[dict] = None, method: str = "POST") -> dict:
-    """Call the UP Tax Intelligence API."""
+    """Call the PT Tax Intelligence API."""
     try:
         if method == "POST":
             response = httpx.post(f"{API_URL}{endpoint}", json=data or {}, timeout=30)

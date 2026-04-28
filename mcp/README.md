@@ -17,8 +17,8 @@ An MCP server that exposes PT Tax Intelligence tools to AI agents via the MCP pr
 pip install .
 
 # Or from source
-git clone https://github.com/rodolfomatos/up-tax-intelligence-mcp.git
-cd up-tax-intelligence-mcp
+git clone https://github.com/rodolfomatos/pt-tax-intelligence-mcp.git
+cd pt-tax-intelligence-mcp
 pip install -e .
 ```
 
@@ -37,13 +37,13 @@ Add to your `claude_desktop_mcp_servers` config:
 
 ```json
 {
-  "up-tax-intelligence": {
+  "pt-tax": {
     "command": "python",
     "args": ["-m", "src.server"],
     "env": {
       "PT_TAX_API_URL": "http://localhost:8000"
     },
-    "workingDirectory": "/path/to/up-tax-intelligence-mcp"
+    "workingDirectory": "/path/to/pt-tax-intelligence-mcp"
   }
 }
 ```
@@ -114,7 +114,7 @@ Environment variable:
 ## Requirements
 
 - Python 3.10+
-- UP Tax Intelligence API running
+- PT Tax Intelligence API running
 - MCP-compatible client
 
 ## Troubleshooting

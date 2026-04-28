@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("UP Tax Intelligence Layer starting...")
+    logger.info("PT Tax Intelligence Layer starting...")
     
     try:
         await init_db()
@@ -52,7 +52,7 @@ async def lifespan(app: FastAPI):
     
     yield
     
-    logger.info("UP Tax Intelligence Layer shutting down...")
+    logger.info("PT Tax Intelligence Layer shutting down...")
     
     # Cleanup
     ptdata = await get_ptdata_client()
@@ -65,7 +65,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="UP Tax Intelligence Layer",
+    title="PT Tax Intelligence Layer",
     description="Backend decision engine for Portuguese tax law analysis",
     version="1.0.0",
     lifespan=lifespan,

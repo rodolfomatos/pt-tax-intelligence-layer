@@ -1,7 +1,7 @@
 ---
-name: up-tax-intelligence
+name: pt-tax-intelligence
 description: Analyze Portuguese tax operations with legal grounding for university administrative workflows. Use when analyzing expenses/invoices for tax deductibility, validating decisions, or searching legislation.
-origin: UP Tax Intelligence Layer
+origin: PT Tax Intelligence Layer
 triggers:
   - "/tax-analyze"
   - "/tax-validate"
@@ -10,7 +10,7 @@ triggers:
   - "tax" (in context)
 ---
 
-# UP Tax Intelligence Skill
+# PT Tax Intelligence Skill
 
 ## When to Use
 
@@ -50,7 +50,7 @@ Structured JSON with:
 
 ## Requirements
 
-- UP Tax Intelligence API must be running
+- PT Tax Intelligence API must be running
 - Default: http://localhost:8000
 - Override with PT_TAX_API_URL environment variable
 
@@ -58,7 +58,7 @@ Structured JSON with:
 
 ```bash
 # Install as Claude Code skill
-git clone https://github.com/rodolfomatos/up-tax-intelligence-skill.git ~/.claude/skills/up-tax-intelligence
+git clone https://github.com/rodolfomatos/pt-tax-intelligence-skill.git ~/.claude/skills/pt-tax-intelligence
 ```
 
 ## Usage

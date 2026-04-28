@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    container_name: up-tax-intelligence-app
+    container_name: pt-tax-intelligence-app
     build:
       context: .
       dockerfile: Dockerfile
@@ -36,7 +36,7 @@ services:
       - tax-network
 
   db:
-    container_name: up-tax-intelligence-db
+    container_name: pt-tax-intelligence-db
     image: postgres:15-alpine
     environment:
       - POSTGRES_USER=postgres
@@ -56,7 +56,7 @@ services:
       - tax-network
 
   cache:
-    container_name: up-tax-intelligence-cache
+    container_name: pt-tax-intelligence-cache
     image: redis:7-alpine
     ports:
       - "6379:6379"

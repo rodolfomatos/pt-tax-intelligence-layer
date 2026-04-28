@@ -1,4 +1,4 @@
-"""Alembic migrations configuration for UP Tax Intelligence Layer."""
+"""Alembic migrations configuration for PT Tax Intelligence Layer."""
 
 import os
 from alembic import context

@@ -1,7 +1,7 @@
 [project]
-name = "up-tax-intelligence-mcp"
+name = "pt-tax-intelligence-mcp"
 version = "1.0.0"
-description = "UP Tax Intelligence MCP Server - Portuguese tax analysis for AI agents"
+description = "PT Tax Intelligence MCP Server - Portuguese tax analysis for AI agents"
 authors = [{name = "Rodolfo Matos", email = "rodolfo@example.com"}]
 license = {text = "MIT"}
 readme = "README.md"
@@ -19,5 +19,5 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.mcp-server]
-name = "up-tax-intelligence"
+name = "pt-tax-intelligence"
 version = "1.0.0"

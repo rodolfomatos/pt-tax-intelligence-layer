@@ -1,4 +1,4 @@
-# Personas — UP Tax Intelligence Layer
+# Personas — PT Tax Intelligence Layer
 
 ## 1. Pesquisador / Investigador
 

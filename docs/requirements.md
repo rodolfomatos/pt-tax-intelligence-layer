@@ -1,4 +1,4 @@
-# Requisitos Funcionais — UP Tax Intelligence Layer
+# Requisitos Funcionais — PT Tax Intelligence Layer
 
 ## 1. Visão Geral
 

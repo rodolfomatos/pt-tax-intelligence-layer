@@ -1,4 +1,4 @@
-# UP Tax Intelligence Hooks
+# PT Tax Intelligence Hooks
 
 ## Auto-triggers
 
@@ -22,12 +22,12 @@ try:
     if r.status_code != 200:
         print("Warning: API may not be healthy")
 except:
-    print("Error: UP Tax Intelligence API not running. Run 'make docker-up' first.")
+    print("Error: PT Tax Intelligence API not running. Run 'make docker-up' first.")
 ```
 
 ## Suggestion Messages
 
-- When user describes a tax scenario: "Would you like me to analyze this with UP Tax Intelligence?"
+- When user describes a tax scenario: "Would you like me to analyze this with PT Tax Intelligence?"
 - When user asks about tax deductibility: "I can check this against Portuguese tax law (CIVA/CIRC)."
 - When user mentions "uncertain": "This might require a tax analysis to determine."
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Documentation generator for UP Tax Intelligence Layer.
+Documentation generator for PT Tax Intelligence Layer.
 
 Extracts endpoints, models, and updates documentation from code.
 Run with: python scripts/generate_docs.py

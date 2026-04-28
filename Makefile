@@ -3,7 +3,7 @@
 PYTHON=python3
 PIP=pip
 PORT=8000
-COMPOSE_PROJECT_NAME=up-tax-intelligence
+COMPOSE_PROJECT_NAME=pt-tax-intelligence
 
 help:
 	@echo "UP Tax Intelligence Layer - Available Commands"
@@ -98,10 +98,10 @@ docs:
 	python scripts/generate_docs.py
 
 shell:
-	docker exec -it up-tax-intelligence-app-1 /bin/bash
+	docker exec -it pt-tax-intelligence-app-1 /bin/bash
 
 db:
-	docker exec -it up-tax-intelligence-db-1 psql -U postgres -d tax_intelligence
+	docker exec -it pt-tax-intelligence-db-1 psql -U postgres -d tax_intelligence
 
 ps:
 	docker-compose ps

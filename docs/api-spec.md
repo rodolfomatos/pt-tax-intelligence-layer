@@ -39,7 +39,7 @@ endpoints: []
 models: []
 ---
 
-# Especificação da API — UP Tax Intelligence Layer
+# Especificação da API — PT Tax Intelligence Layer
 
 ## 1. Visão Geral
 
