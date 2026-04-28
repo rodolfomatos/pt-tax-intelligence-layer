@@ -20,7 +20,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app/ ./app/
 COPY scripts/ ./scripts/
 COPY docs/ ./docs/
-        COPY pytest.ini . 2>/dev/null || true
+    COPYCOPY true pytest.ini . || true
 
 ENV PYTHONPATH=/app
 ENV PYTHONDONTWRITEBYTECODE=1
