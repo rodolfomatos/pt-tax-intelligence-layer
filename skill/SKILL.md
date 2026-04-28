@@ -52,7 +52,7 @@ Structured JSON with:
 
 - UP Tax Intelligence API must be running
 - Default: http://localhost:8000
-- Override with UP_TAX_API_URL environment variable
+- Override with PT_TAX_API_URL environment variable
 
 ## Installation
 
@@ -96,6 +96,6 @@ In Claude Code, just mention "tax analyze" or use the skill directly:
 
 ## Links
 
-- [Full Documentation](https://github.com/rodolfomatos/up-tax-intelligence-layer)
+- [Full Documentation](https://github.com/rodolfomatos/pt-tax-intelligence-layer)
 - [API Docs](http://localhost:8000/docs)
-- [Docker Setup](https://github.com/rodolfomatos/up-tax-intelligence-layer#quick-start)
+- [Docker Setup](https://github.com/rodolfomatos/pt-tax-intelligence-layer#quick-start)

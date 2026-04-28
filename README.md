@@ -1,6 +1,6 @@
-# UP Tax Intelligence Layer
+# PT Tax Intelligence Layer
 
-A backend decision engine that transforms Portuguese tax law into structured, legally grounded decisions for university administrative workflows.
+A backend decision engine that transforms Portuguese tax law into structured, legally grounded decisions for administrative workflows.
 
 ## What This Is NOT
 
@@ -55,8 +55,8 @@ A backend decision engine that transforms Portuguese tax law into structured, le
 
 ```bash
 # Clone and configure
-git clone https://github.com/rodolfomatos/up-tax-intelligence-layer.git
-cd up-tax-intelligence-layer
+git clone https://github.com/rodolfomatos/pt-tax-intelligence-layer.git
+cd pt-tax-intelligence-layer
 cp .env.example .env
 
 # Edit .env with your keys
@@ -219,8 +219,8 @@ Lightweight command shims that call the API. For use in Claude Code/OpenCode wit
 
 ```bash
 # Install as skill
-git clone https://github.com/rodolfomatos/up-tax-intelligence-layer.git
-ln -s up-tax-intelligence-layer/skill ~/.claude/skills/up-tax-intelligence
+git clone https://github.com/rodolfomatos/pt-tax-intelligence-layer.git
+ln -s pt-tax-intelligence-layer/skill ~/.claude/skills/pt-tax-intelligence
 ```
 
 Commands available:

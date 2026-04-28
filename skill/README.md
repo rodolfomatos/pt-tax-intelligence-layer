@@ -9,7 +9,7 @@ Command shims for the UP Tax Intelligence Layer API.
 git clone https://github.com/rodolfomatos/up-tax-intelligence-skill.git ~/.claude/skills/up-tax-intelligence
 
 # Or create a symlink to this repo
-ln -s /path/to/up-tax-intelligence-layer/skill ~/.claude/skills/up-tax-intelligence
+ln -s /path/to/pt-tax-intelligence-layer/skill ~/.claude/skills/up-tax-intelligence
 ```
 
 ## Requirements
@@ -23,7 +23,7 @@ ln -s /path/to/up-tax-intelligence-layer/skill ~/.claude/skills/up-tax-intellige
 Set environment variable to override API URL:
 
 ```bash
-export UP_TAX_API_URL=http://your-server:8000
+export PT_TAX_API_URL=http://your-server:8000
 ```
 
 ## Commands
@@ -80,13 +80,13 @@ The skill will be triggered when you mention tax analysis.
 
 ```bash
 # Start the API
-cd up-tax-intelligence-layer
+cd pt-tax-intelligence-layer
 make docker-up
 ```
 
 ### Connection refused
 
-Check `UP_TAX_API_URL` environment variable matches your API server.
+Check `PT_TAX_API_URL` environment variable matches your API server.
 
 ## License
 

@@ -1,8 +1,8 @@
-# HOWTO — UP Tax Intelligence Layer
+# HOWTO — PT Tax Intelligence Layer
 
 ## 1. Introdução
 
-Este documento explica como configurar, executar e usar o UP Tax Intelligence Layer.
+Este documento explica como configurar, executar e usar o PT Tax Intelligence Layer.
 
 ---
 
@@ -13,7 +13,7 @@ Este documento explica como configurar, executar e usar o UP Tax Intelligence La
 ```bash
 # 1. Clone e configure
 git clone <repository-url>
-cd up-tax-intelligence-layer
+cd pt-tax-intelligence-layer
 cp .env.example .env
 
 # 2. Edite o .env com as suas chaves

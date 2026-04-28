@@ -23,3 +23,5 @@ htmlcov/
 *.swp
 *.swo
 docker-compose.override.yml
+opencode-start
+opencode.start

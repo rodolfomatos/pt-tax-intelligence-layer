@@ -1,4 +1,4 @@
-# Arquitetura — UP Tax Intelligence Layer
+# Arquitetura — PT Tax Intelligence Layer
 
 ## 1. Visão Geral
 
@@ -202,7 +202,7 @@ CACHE_TTL_SECONDS=86400
 ## 7. Diretórios
 
 ```
-up-tax-intelligence-layer/
+pt-tax-intelligence-layer/
 ├── api/              # FastAPI endpoints
 ├── services/
 │   ├── decision/     # Agregação de decisões

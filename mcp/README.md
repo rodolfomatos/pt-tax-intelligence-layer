@@ -1,10 +1,10 @@
-# UP Tax Intelligence MCP Server
+# PT Tax Intelligence MCP Server
 
 MCP (Model Context Protocol) server for Portuguese tax analysis.
 
 ## What This Is
 
-An MCP server that exposes UP Tax Intelligence tools to AI agents via the MCP protocol. Works with:
+An MCP server that exposes PT Tax Intelligence tools to AI agents via the MCP protocol. Works with:
 - Claude Desktop
 - Claude Code
 - Cursor
@@ -41,7 +41,7 @@ Add to your `claude_desktop_mcp_servers` config:
     "command": "python",
     "args": ["-m", "src.server"],
     "env": {
-      "UP_TAX_API_URL": "http://localhost:8000"
+      "PT_TAX_API_URL": "http://localhost:8000"
     },
     "workingDirectory": "/path/to/up-tax-intelligence-mcp"
   }
@@ -59,7 +59,7 @@ Add to your settings (settings.json):
       "command": "python",
       "args": ["src/server.py"],
       "env": {
-        "UP_TAX_API_URL": "http://localhost:8000"
+        "PT_TAX_API_URL": "http://localhost:8000"
       }
     }
   }
@@ -69,7 +69,7 @@ Add to your settings (settings.json):
 ## Configuration
 
 Environment variable:
-- `UP_TAX_API_URL` - URL of the UP Tax Intelligence API (default: http://localhost:8000)
+- `PT_TAX_API_URL` - URL of the PT Tax Intelligence API (default: http://localhost:8000)
 
 ## Available Tools
 
@@ -124,7 +124,7 @@ Environment variable:
 API not running:
 
 ```bash
-cd up-tax-intelligence-layer
+cd pt-tax-intelligence-layer
 make docker-up
 ```
 

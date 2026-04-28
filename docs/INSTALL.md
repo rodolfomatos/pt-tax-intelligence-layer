@@ -12,7 +12,7 @@
 
 ```bash
 git clone <repository-url>
-cd up-tax-intelligence-layer
+cd pt-tax-intelligence-layer
 ```
 
 ### 2. Create virtual environment

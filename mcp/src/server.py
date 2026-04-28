@@ -24,7 +24,7 @@ except ImportError:
     from mcp.types import Tool, TextContent
     import httpx
 
-API_URL = os.getenv("UP_TAX_API_URL", "http://localhost:8000")
+API_URL = os.getenv("PT_TAX_API_URL", "http://localhost:8000")
 
 server = Server("up-tax-intelligence")
 
