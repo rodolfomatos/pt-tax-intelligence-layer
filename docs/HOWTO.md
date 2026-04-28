@@ -295,42 +295,97 @@ curl http://localhost:8000/tax/statistics
 }
 ```
 
-### 4.8 MCP Tools (Pesquisa Externa)
+### 4.9 Skill (Claude Code / OpenCode)
+
+O projeto inclui uma **Skill** para integração com AI agents:
 
 ```bash
-# Listar ferramentas disponíveis
-curl http://localhost:8000/mcp/tools
+# Estrutura
+skill/
+├── SKILL.md              # Documentação da skill
+├── README.md              # Instruções
+├── requirements.txt       # httpx, pydantic
+├── commands/
+│   ├── tax-analyze     # Chama POST /tax/analyze
+│   ├── tax-validate    # Chama POST /tax/validate
+│   ├── tax-search      # Chama GET /tax/search
+│   ├── tax-decisions   # Chama GET /tax/decisions
+│   └── dashboard-summary # Chama GET /dashboard/summary
+└── hooks/
+    └── pt-tax-intelligence.hooks.md
 ```
 
-**Response:**
-```json
+**Instalação (Claude Code):**
+```bash
+# Copiar para o diretório do projeto
+cp -r skill/ ~/.claude/skills/pt-tax-intelligence/
+# Ou para OpenCode:
+cp -r skill/ ~/.config/opencode/skills/pt-tax-intelligence/
+```
+
+**Uso:**
+```bash
+# Dentro do Claude Code ou OpenCode:
+/tax-analyze '{"operation_type": "expense", "description": "..."}'
+/tax-search "IVA dedução"
+/dashboard-summary
+```
+
+---
+
+### 4.10 MCP Server (Model Context Protocol)
+
+O projeto inclui um **MCP server** (stdio + HTTP):
+
+```bash
+# Estrutura
+mcp/
+├── README.md            # Instruções MCP
+├── pyproject.toml      # Python package
+├── requirements.txt     # mcp, httpx
+└── src/
+    ├── __init__.py
+    └── server.py      # MCP server com tools
+```
+
+**Instalação:**
+```bash
+cd mcp
+pip install -e .
+# Ou via pip
+pip install pt-tax-intelligence-mcp
+```
+
+**Uso (stdio):**
+```bash
+# Testar o MCP server
+python3 -m mcp.src.server
+
+# Integrar com Claude (claude_desktop_config.json):
 {
-  "tools": [
-    {
-      "type": "legislation_search",
-      "description": "Search Portuguese tax legislation",
-      "parameters": {"query": {...}}
-    },
-    {
-      "type": "jurisprudence_search",
-      "description": "Search tax jurisprudence",
-      "parameters": {...}
+  "mcpServers": {
+    "pt-tax-intelligence": {
+      "command": "python3",
+      "args": ["/caminho/para/mcp/src/server.py"]
     }
-  ]
+  }
 }
 ```
 
+**Uso (HTTP - já integrado na API):**
 ```bash
-# Executar uma ferramenta
+# Listar ferramentas MCP
+curl http://localhost:8000/mcp/tools
+
+# Executar ferramenta
 curl -X POST http://localhost:8000/mcp/execute \
   -H "Content-Type: application/json" \
-  -d '{
-    "tool_name": "search_legislation",
-    "parameters": {"query": "IVA deduction", "code": "CIVA", "limit": 5}
-  }'
+  -d '{"tool_name": "tax_analyze", "parameters": {...}}'
 ```
 
-### 4.9 Knowledge Graph
+---
+
+### 4.11 Knowledge Graph
 
 ```bash
 # Estatísticas do grafo
