@@ -64,16 +64,18 @@
 - [x] Integration tests
 - [x] Documentation
 - [x] Performance benchmarks
-- [ ] Security audit
+- [x] Security audit
 
-## Priority Order
+## Phase 9: Advanced Features ✅
 
-1. Data Layer (ptdata integration) ✓
-2. API Layer (endpoints) ✓
-3. Rule Engine (deterministic logic) ✓
-4. Reasoning Layer (LLM) ✓
-5. Decision Layer (aggregation) ✓
-6. Integration & Deployment ✓
+- [x] Batch endpoint (`/tax/analyze/batch`)
+- [x] Webhook activation for high-risk decisions
+- [x] Historical changes tracking (`/tax/history/{id}`)
+- [x] CSV/Excel export (`/tax/export`)
+- [x] Refactor main.py into routers
+- [x] Integration tests with real DB (Docker)
+- [x] Fix singleton pattern consistency
+- [x] Add type hints to functions
 
 ## Notes
 

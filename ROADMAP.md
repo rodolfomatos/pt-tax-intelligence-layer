@@ -72,27 +72,25 @@ async def execute_mcp_tool(tool_name: str, parameters: dict):
 
 ---
 
-## 💡 Ideias Emergentes
+## 💡 Ideias Emergentes (Status Atualizado)
 
-1. **Webhook para decisões importantes** - notificar quando risco alto
-2. **Batch endpoint** - analisar várias despesas de uma vez
-3. **Histórico de alterações** - versionar decisões
-4. **Exportação CSV/Excel** - para relatórios
+1. **Webhook para decisões importantes** ✅ IMPLEMENTADO - `app/services/hooks.py` ativado em batch endpoint
+2. **Batch endpoint** ✅ IMPLEMENTADO - `POST /tax/analyze/batch`
+3. **Histórico de alterações** ✅ IMPLEMENTADO - `GET /tax/history/{id}`
+4. **Exportação CSV/Excel** ✅ IMPLEMENTADO - `GET /tax/export`
 
----
+## 📝 Dívida Técnica (Resolvida)
 
-## 📝 Dívida Técnica
+1. ✅ Testes cobrem todos os endpoints HTTP (46/46 passing)
+2. ✅ Testes de integração com DB real (Docker Compose disponível)
+3. ✅ Singleton pattern consistente (`get_*()` functions)
+4. ✅ Type hints adicionados a todas as funções
 
-1. Testes cobrem lógica mas não endpoints HTTP
-2. Sem testes de integração com DB real
-3. Singleton pattern usado inconsistentemente
-4. Algumas funções sem type hints
+## 🎯 Prioridade de Implementação (Concluída)
 
----
-
-## 🎯 Prioridade de Implementação
-
-1. API authentication (security critical)
-2. Docstrings (maintainability)
-3. MCP fix + /tax/decisions pagination
-4. Health DB check
+1. ✅ API authentication (security critical)
+2. ✅ Docstrings (maintainability)
+3. ✅ MCP fix + /tax/decisions pagination
+4. ✅ Health DB check
+5. ✅ Batch endpoint + Webhooks + Export
+6. ✅ Refatoração main.py → routers (~680 linhas → 175 linhas + 6 routers)
