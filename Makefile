@@ -2,8 +2,15 @@
 
 PYTHON=python3
 PIP=pip
+VENV_DIR=venv
 PORT=8000
 COMPOSE_PROJECT_NAME=pt-tax-intelligence
+
+# Check if we should use venv
+ifneq ("$(wildcard $(VENV_DIR))","")
+PYTHON=$(VENV_DIR)/bin/python
+PIP=$(VENV_DIR)/bin/pip
+endif
 
 help:
 	@echo "PT Tax Intelligence Layer - Available Commands"
@@ -44,20 +51,27 @@ help:
 	@echo "  make clean        - Clean temporary files"
 	@echo "  make docs         - Generate documentation"
 
-install:
+install: venv
 	@echo "Installing dependencies..."
-	pip install --break-system-packages -r requirements.txt || pip install -r requirements.txt
+	$(PIP) install -r requirements.txt
 
-run:
+venv:
+	@if [ ! -d "$(VENV_DIR)" ]; then \
+		echo "Creating virtual environment..."; \
+		$(PYTHON) -m venv $(VENV_DIR); \
+		$(VENV_DIR)/bin/pip install --upgrade pip; \
+	fi
+
+run: $(VENV_DIR)
 	$(PYTHON) -m uvicorn app.main:app --host 0.0.0.0 --port $(PORT) --reload
 
-test:
+test: $(VENV_DIR)
 	$(PYTHON) -m pytest tests/ -v
 
-lint:
+lint: $(VENV_DIR)
 	$(PYTHON) -m ruff check .
 
-format:
+format: $(VENV_DIR)
 	$(PYTHON) -m ruff check --fix .
 
 docker-build:
