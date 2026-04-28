@@ -13,5 +13,5 @@ prometheus-client==0.19.0
 ruff==0.1.9
 pytest==7.4.4
 pytest-asyncio==0.23.3
-chromadb==0.4.22
+chromadb>=0.6.0
 sentence-transformers==2.2.2

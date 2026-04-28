@@ -15,7 +15,7 @@ services:
       - IAEDU_ENDPOINT=${IAEDU_ENDPOINT}
       - IAEDU_CHANNEL_ID=${IAEDU_CHANNEL_ID}
       - USE_IAEDU=${USE_IAEDU:-false}
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/tax_intelligence
+       - DATABASE_URL=postgresql://postgres:postgres@db:5433/tax_intelligence
       - REDIS_URL=redis://cache:6379/0
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
       - RATE_LIMIT_PER_MINUTE=${RATE_LIMIT_PER_MINUTE:-60}
@@ -43,7 +43,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=tax_intelligence
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
