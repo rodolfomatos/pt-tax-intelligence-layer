@@ -1,0 +1,13 @@
+# Minimal pyproject.toml for Docker build compatibility
+# This project uses requirements.txt, not Poetry
+# This file exists solely to satisfy Dockerfile COPY instruction
+
+[project]
+name = "pt-tax-intelligence-layer"
+version = "1.0.0"
+description = "Backend decision engine for Portuguese tax law"
+requires-python = ">=3.10"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

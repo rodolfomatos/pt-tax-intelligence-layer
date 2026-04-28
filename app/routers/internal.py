@@ -4,8 +4,7 @@ Internal router.
 Contains internal endpoints for benchmarks and system operations.
 """
 
-from fastapi import APIRouter, Request
-from typing import Optional
+from fastapi import APIRouter, Request, HTTPException
 import logging
 import time
 
@@ -89,7 +88,7 @@ async def run_benchmark(
                     results["rule_engine"]["total_time_ms"] += elapsed_ms
                 else:
                     # Fall back to LLM
-                    llm_result = await llm_reasoning.analyze(input_item)
+                    await llm_reasoning.analyze(input_item)
                     results["llm"]["count"] += 1
                     elapsed_ms = int((time.time() - start) * 1000)
                     results["llm"]["total_time_ms"] += elapsed_ms

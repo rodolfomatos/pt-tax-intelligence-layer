@@ -4,11 +4,13 @@ Dashboard router.
 Contains endpoints for dashboard summary and trends.
 """
 
-from fastapi import APIRouter, Query
-from typing import Optional
+from fastapi import APIRouter, Query, HTTPException
 from datetime import datetime, timedelta
+from sqlalchemy import select, func
 
 from app.database.audit import get_audit_repository
+from app.database.models import TaxDecision
+from app.database.session import get_db_session
 import logging
 
 logger = logging.getLogger(__name__)
@@ -69,10 +71,6 @@ async def get_dashboard_trends(
     Returns trend data for charting.
     """
     try:
-        from sqlalchemy import func
-        from app.database.models import TaxDecision
-        from app.database.session import get_db_session
-
         start_date = datetime.utcnow() - timedelta(days=days)
 
         async with get_db_session() as session:

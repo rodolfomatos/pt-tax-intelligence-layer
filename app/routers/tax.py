@@ -4,12 +4,9 @@ Tax analysis routers.
 Contains endpoints for tax analysis, validation, batch processing, and export.
 """
 
-from fastapi import APIRouter, Request
-from fastapi.responses import JSONResponse, Response
-import csv
-import io
-from typing import Optional, List
-from datetime import datetime
+from fastapi import APIRouter, Request, HTTPException
+from fastapi.responses import Response
+from typing import Optional
 
 from app.models import (
     TaxAnalysisInput,
@@ -21,8 +18,6 @@ from app.models.batch import BatchAnalysisRequest, BatchAnalysisResponse
 from app.services.rules.engine import get_rule_engine
 from app.services.reasoning import get_llm_reasoning
 from app.services.decision import get_decision_aggregator
-from app.data.ptdata.client import get_ptdata_client
-from app.data.cache.client import get_cache_client
 from app.database.audit import get_audit_repository
 from app.services.hooks import get_system_hooks, EventType
 import logging
@@ -127,7 +122,6 @@ async def analyze_tax(input: TaxAnalysisInput, request: Request):
     # Save to knowledge graph (GMIF classification)
     try:
         from app.data.memory.graph.builder import get_graph_builder
-        from app.data.memory.graph.gmif import get_gmif_classifier
 
         builder = get_graph_builder()
         gmif_type = await builder.add_decision(
@@ -275,7 +269,6 @@ async def export_decisions(
     Useful for university reporting and audit purposes.
     """
     try:
-        from fastapi.responses import Response as FastAPIResponse
         import csv
         import io
 
@@ -335,7 +328,7 @@ async def export_decisions(
                         try:
                             if len(str(cell.value)) > max_length:
                                 max_length = len(str(cell.value))
-                        except:
+                        except Exception:
                             pass
                     adjusted_width = min(max_length + 2, 50)
                     ws.column_dimensions[column_letter].width = adjusted_width
