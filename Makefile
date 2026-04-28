@@ -46,7 +46,7 @@ help:
 
 install:
 	@echo "Installing dependencies..."
-	$(PIP) install -r requirements.txt
+	pip install --break-system-packages -r requirements.txt || pip install -r requirements.txt
 
 run:
 	$(PYTHON) -m uvicorn app.main:app --host 0.0.0.0 --port $(PORT) --reload
@@ -61,28 +61,28 @@ format:
 	$(PYTHON) -m ruff check --fix .
 
 docker-build:
-	docker-compose build --no-cache
+	docker compose build --no-cache
 
 docker-up:
-	docker-compose up -d
+	docker compose up -d
 	@echo "Waiting for services to be ready..."
 	@sleep 10
 	@echo "Services started. API available at http://localhost:8000"
 
 docker-down:
-	docker-compose down
+	docker compose down
 
 docker-restart:
-	docker-compose restart
+	docker compose restart
 
 docker-logs:
-	docker-compose logs -f
+	docker compose logs -f
 
 docker-logs-app:
-	docker-compose logs -f app
+	docker compose logs -f app
 
 docker-logs-db:
-	docker-compose logs -f db
+	docker compose logs -f db
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
@@ -104,14 +104,14 @@ db:
 	docker exec -it pt-tax-intelligence-db-1 psql -U postgres -d tax_intelligence
 
 ps:
-	docker-compose ps
+	docker compose ps
 
 logs:
-	docker-compose logs
+	docker compose logs
 
 status:
 	@echo "=== Service Status ==="
-	@docker-compose ps
+	@docker compose ps
 	@echo ""
 	@echo "=== Health Check ==="
 	@curl -s http://localhost:8000/health | python -m json.tool || echo "Service not running"
