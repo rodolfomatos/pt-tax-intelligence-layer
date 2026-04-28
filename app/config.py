@@ -6,7 +6,7 @@ from pydantic import Field, field_validator
 class Settings(BaseSettings):
     ptdata_api_key: str = Field(default="", alias="PTDATA_API_KEY")
     ptdata_api_url: str = Field(
-        default="https://api.ptdata.org/mcp", alias="PTDATA_API_URL"
+        default="https://api.ptdata.org", alias="PTDATA_API_URL"
     )
 
     openai_api_key: str = Field(default="", alias="OPENAI_API_KEY")

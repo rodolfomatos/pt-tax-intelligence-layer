@@ -62,11 +62,23 @@ async def init_db():
     """Initialize database tables."""
     from app.database.models import Base
     from app.data.memory.graph.models import Base as GraphBase
-    
+    from sqlalchemy import inspect
+
     engine = get_engine()
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-        await conn.run_sync(GraphBase.metadata.create_all)
+        def get_existing_tables(sync_conn):
+            inspector = inspect(sync_conn)
+            return set(inspector.get_table_names())
+
+        existing_tables = await conn.run_sync(get_existing_tables)
+        required_tables = set(Base.metadata.tables.keys()) | set(GraphBase.metadata.tables.keys())
+
+        if required_tables.issubset(existing_tables):
+            logger.info("Database already initialized, skipping creation")
+            return
+
+        await conn.run_sync(Base.metadata.create_all, checkfirst=True)
+        await conn.run_sync(GraphBase.metadata.create_all, checkfirst=True)
     logger.info("Database tables created")
 
 

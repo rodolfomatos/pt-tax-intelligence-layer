@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     container_name: pt-tax-intelligence-app
@@ -15,7 +13,7 @@ services:
       - IAEDU_ENDPOINT=${IAEDU_ENDPOINT}
       - IAEDU_CHANNEL_ID=${IAEDU_CHANNEL_ID}
       - USE_IAEDU=${USE_IAEDU:-false}
-       - DATABASE_URL=postgresql://postgres:postgres@db:5433/tax_intelligence
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/tax_intelligence
       - REDIS_URL=redis://cache:6379/0
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
       - RATE_LIMIT_PER_MINUTE=${RATE_LIMIT_PER_MINUTE:-60}
@@ -46,6 +44,7 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./postgres/conf.d:/etc/postgresql/conf.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s

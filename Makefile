@@ -112,10 +112,10 @@ docs:
 	python scripts/generate_docs.py
 
 shell:
-	docker exec -it pt-tax-intelligence-app-1 /bin/bash
+	docker exec -it pt-tax-intelligence-app /bin/bash
 
 db:
-	docker exec -it pt-tax-intelligence-db-1 psql -U postgres -d tax_intelligence
+	docker exec -it pt-tax-intelligence-db psql -U postgres -d tax_intelligence
 
 ps:
 	docker compose ps
