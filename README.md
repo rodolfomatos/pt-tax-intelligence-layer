@@ -2,6 +2,8 @@
 
 A backend decision engine that transforms Portuguese tax law into structured, legally grounded decisions for administrative workflows.
 
+**Data Source**: This project is built on the [ptdata API](https://api.ptdata.org/) — Portuguese legislation API providing structured access to tax laws (CIVA, CIRC, etc.).
+
 ## What This Is NOT
 
 - A chatbot
