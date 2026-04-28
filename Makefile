@@ -6,7 +6,7 @@ PORT=8000
 COMPOSE_PROJECT_NAME=pt-tax-intelligence
 
 help:
-	@echo "UP Tax Intelligence Layer - Available Commands"
+	@echo "PT Tax Intelligence Layer - Available Commands"
 	@echo ""
 	@echo "Development:"
 	@echo "  make install       - Install dependencies"
