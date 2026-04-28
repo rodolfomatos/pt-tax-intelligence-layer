@@ -103,24 +103,38 @@ Não é falta de informação.
 
 ### Data Layer
 - API legislação (ptdata)
-- Cache local
+- Cache Redis com TTL + invalidação manual
+- ChromaDB para busca semântica
+- Grafo de decisões (contradições, timeline)
 
 ### Reasoning Layer
-- LLM com prompting restritivo
+- LLM com prompting restritivo (IAEDU/OpenAI/Ollama)
 - Extração e estruturação
+- Legal citations service com fallback
 
 ### Rule Engine
-- lógica determinística
+- lógica determinística (CIVA, CIRC)
 - override do LLM
+- Regras: FCT/Horizon/internal/other
 
 ### Decision Layer
 - agregação final
-- scoring
+- scoring (confidence 0.0-1.0)
 - output estruturado
+- versionamento legal (legal_version_timestamp)
+
+### Memory Layer (L0-L3)
+- L0: Working memory (cache Redis)
+- L1: Episódica (PostgreSQL audit logs)
+- L2: Semântica (ChromaDB)
+- L3: Grafo GMIF (M1-M7)
 
 ### Integration Layer
-- APIs internas
-- hooks em sistemas
+- APIs internas (FastAPI)
+- MCP server (stdio + HTTP)
+- Skill para Claude Code / OpenCode
+- Webhooks e system hooks
+- Prometheus metrics
 
 ---
 
@@ -166,9 +180,11 @@ Output esperado:
 Este sistema não vive sozinho.
 
 Integra com:
-- sistemas internos
-- dashboards
-- APIs existentes
+- sistemas internos (ERP, dashboards)
+- Claude Code / OpenCode via Skill (shims em `skill/`)
+- MCP server (stdio em `mcp/`, HTTP em `/mcp/*`)
+- Webhooks para eventos de decisão
+- Prometheus metrics (`/metrics`)
 
 ---
 
@@ -228,40 +244,60 @@ Projetos europeus introduzem complexidade
 
 ---
 
-## 10.2 Correções propostas
+## 10.2 Correções propostas e implementadas
 
-### Correção 1 — Introduzir contexto forte
-Adicionar:
-- tipo de projeto
-- regime fiscal
+### Correção 1 — Introduzir contexto forte ✅ IMPLEMENTADO
+Adicionado:
+- `entity_type`: university | researcher | department | project
+- `project_type`: FCT | Horizon | internal | other
+- `activity_type`: taxable | exempt | mixed
+- `location`: PT | EU | non-EU
 
-### Correção 2 — Expandir Rule Engine
-Criar biblioteca de regras:
-- IVA
-- amortizações
-- deduções
+### Correção 2 — Expandir Rule Engine ✅ IMPLEMENTADO
+Criada biblioteca de regras em `app/services/rules/engine.py`:
+- CIVA: Artigos 9º, 20º, 21º, 41º
+- CIRC: Artigos 23º, 24º, 25º
+- Regras para FCT/Horizon/internal/other
 
-### Correção 3 — Versionamento
-Guardar:
-- timestamp
-- versão legal
+### Correção 3 — Versionamento ✅ IMPLEMENTADO
+Guardar em cada decisão:
+- `legal_version_timestamp` (ISO8601)
+- Rastreabilidade de artigos usados
 
-### Correção 4 — Logging
-Registar:
-- input
-- decisão
-- artigos
+### Correção 4 — Logging ✅ IMPLEMENTADO
+Registado em PostgreSQL via `AuditLog`:
+- input completo
+- decisão e confidence
+- artigos legais citados
+- timestamp e user context
 
-### Correção 5 — Multi-layer validation
-- LLM + regras + fallback
+### Correção 5 — Multi-layer validation ✅ IMPLEMENTADO
+Pipeline de decisão:
+1. Rule Engine (determinístico) → prioridade máxima
+2. LLM Reasoning (grounding obrigatório) → auxiliar
+3. Decision Aggregator → output final estruturado
+4. Validação de consistência (min. 2 fontes para high confidence)
 
 ---
 
-# 11. Evolução futura
+# 11. Evolução - Implementado e Futuro
 
-- integração com ERP
+## ✅ IMPLEMENTADO (2026-04-28)
+- API completa (6 endpoints + 2 dashboard + 1 benchmark)
+- Rule Engine com regras CIVA/CIRC
+- LLM Reasoning com 3 providers (IAEDU/OpenAI/Ollama)
+- Memory Systems L0-L3 (Redis/PostgreSQL/ChromaDB/GMIF)
+- MCP server (stdio + HTTP) + Skill para AI agents
+- Autenticação API + Rate limiting + Prometheus metrics
+- Alembic migrations + system hooks
+- Testes (46/46 passing)
+
+## 🔮 Futuro
+- integração com ERP universitário
 - automação completa de compliance
-- recomendações proativas
+- recomendações proativas baseadas em histórico
+- Multi-jurisdição (projetos EU)
+- Auditoria de segurança completa
 
 ---
 
