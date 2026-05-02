@@ -7,6 +7,7 @@ Builds graph from tax decisions with GMIF classification.
 import logging
 from typing import Optional, List, Dict
 from uuid import uuid4
+from sqlalchemy import select, func
 from app.data.memory.graph.models import GraphNode, GraphEdge
 from app.data.memory.graph.gmif import get_gmif_classifier
 from app.database.session import get_db_session
@@ -222,6 +223,57 @@ class KnowledgeGraphBuilder:
                 )
                 session.add(edge)
                 logger.info(f"Added similarity edge between {decision_id_a} and {decision_id_b}")
+
+    async def get_stats(self) -> dict:
+        """Get knowledge graph statistics."""
+        async with get_db_session() as session:
+            total_nodes = await session.scalar(select(func.count(GraphNode.id))) or 0
+            total_edges = await session.scalar(select(func.count(GraphEdge.id))) or 0
+
+            # GMIF distribution for decision nodes
+            gmif_dist_result = await session.execute(
+                select(GraphNode.gmif_type, func.count(GraphNode.id))
+                .where(GraphNode.node_type == "decision")
+                .group_by(GraphNode.gmif_type)
+            )
+            gmif_dist = {row[0]: row[1] for row in gmif_dist_result.all()}
+
+            return {
+                "total_nodes": total_nodes,
+                "total_edges": total_edges,
+                "gmif_distribution": gmif_dist,
+            }
+
+    async def get_gmif_summary(self) -> dict:
+        """Get GMIF classification summary (same as get_stats for now)."""
+        return await self.get_stats()
+
+    async def get_decisions_by_gmif(self, gmif_type: str, limit: int = 100) -> List[Dict]:
+        """Get decisions by GMIF classification type."""
+        async with get_db_session() as session:
+            result = await session.execute(
+                select(GraphNode)
+                .where(
+                    GraphNode.node_type == "decision",
+                    GraphNode.gmif_type == gmif_type
+                )
+                .limit(limit)
+            )
+            nodes = result.scalars().all()
+            return [
+                {
+                    "id": str(node.id),
+                    "label": node.label,
+                    "gmif_type": node.gmif_type,
+                    "properties": node.properties,
+                }
+                for node in nodes
+            ]
+
+    async def find_contradictions(self, decision_id: Optional[str] = None) -> List[Dict]:
+        """Find contradictory decisions (currently stub)."""
+        # TODO: Implement contradiction detection logic
+        return []
 
 
 # Singleton

@@ -4,6 +4,7 @@ Pytest configuration and fixtures for the PT Tax Intelligence Layer.
 
 import os
 import pytest
+from unittest.mock import AsyncMock
 from httpx import AsyncClient, ASGITransport
 from app.models import TaxAnalysisInput, Context
 
@@ -157,3 +158,34 @@ def mock_cache(monkeypatch):
             pass
 
     monkeypatch.setattr(cache_client_module, "_cache", MockCache())
+
+
+@pytest.fixture
+def mock_graph_builder(monkeypatch):
+    """Mock graph builder for testing."""
+    from app.data.memory.graph.builder import KnowledgeGraphBuilder
+
+    builder = AsyncMock(spec=KnowledgeGraphBuilder)
+    builder.get_stats.return_value = {
+        "total_nodes": 100,
+        "total_edges": 200,
+        "gmif_distribution": {"M1": 50, "M2": 30, "M3": 20}
+    }
+    builder.get_gmif_summary.return_value = builder.get_stats.return_value
+    builder.get_decisions_by_gmif.return_value = []
+    builder.find_contradictions.return_value = []
+
+    # Patch the reference in the router module, not the original module
+    monkeypatch.setattr(
+        "app.routers.graph.get_graph_builder",
+        lambda: builder
+    )
+    return builder
+
+
+@pytest.fixture
+def mock_audit_repo(monkeypatch):
+    """Mock audit repository."""
+    from app.database.audit import AuditRepository
+    repo = AsyncMock(spec=AuditRepository)
+    return repo

@@ -4,7 +4,7 @@ Knowledge Graph Models - Nodes and Edges
 Based on GMIF classification system.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from uuid import uuid4
 from sqlalchemy import String, Text, DateTime, Float, Index, ForeignKey
@@ -29,7 +29,7 @@ class GraphNode(Base):
     __tablename__ = "graph_nodes"
     
     id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     
     # Node identification
     node_type: Mapped[str] = mapped_column(String(20), nullable=False)  # decision, legal_basis, entity, rule
@@ -42,7 +42,7 @@ class GraphNode(Base):
     gmif_type: Mapped[Optional[str]] = mapped_column(String(2), nullable=True)  # M1-M7
     
     # Temporal validity
-    valid_from: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    valid_from: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     valid_to: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     
     # External references
@@ -71,7 +71,7 @@ class GraphEdge(Base):
     __tablename__ = "graph_edges"
     
     id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     
     # Edge endpoints
     source_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("graph_nodes.id"), nullable=False)
@@ -87,7 +87,7 @@ class GraphEdge(Base):
     evidence_type: Mapped[str] = mapped_column(String(20), default="EXTRACTED")  # EXTRACTED, INFERRED
     
     # Temporal validity
-    valid_from: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    valid_from: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     valid_to: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     
     __table_args__ = (
@@ -104,7 +104,7 @@ class Contradiction(Base):
     __tablename__ = "contradictions"
     
     id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     
     # Contradiction parties
     claim_a: Mapped[str] = mapped_column(String(200), nullable=False)
