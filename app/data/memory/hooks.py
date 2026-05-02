@@ -9,7 +9,7 @@ Inspirado em Claude-Mem:
 
 import logging
 from typing import Callable
-from datetime import datetime
+from datetime import datetime, timezone
 from functools import wraps
 
 logger = logging.getLogger(__name__)
@@ -54,7 +54,7 @@ class DecisionHooks:
             decision_id=decision_id,
             input_data=input_data,
             output_data=output_data,
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
         )
         logger.info(f"Decision hook triggered: {decision_id}")
     
@@ -66,9 +66,9 @@ class DecisionHooks:
             validation_id=validation_id,
             is_valid=is_valid,
             notes=notes,
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
         )
-    
+     
     @staticmethod
     def on_search(query: str, results_count: int):
         """Disparado quando uma pesquisa é executada."""
@@ -76,9 +76,9 @@ class DecisionHooks:
             "on_search_executed",
             query=query,
             results_count=results_count,
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
         )
-    
+     
     @staticmethod
     def on_error(error_type: str, error_message: str, context: dict):
         """Disparado quando ocorre um erro."""
@@ -87,7 +87,7 @@ class DecisionHooks:
             error_type=error_type,
             error_message=error_message,
             context=context,
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
         )
 
 

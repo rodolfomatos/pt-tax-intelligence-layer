@@ -251,6 +251,352 @@ tax_analysis_total 1234
 
 ---
 
+### 3.7 GET /tax/decisions
+
+List past tax decisions with pagination and optional filters.
+
+**Request:**
+```http
+GET /tax/decisions?limit=100&offset=0&decision_type=deductible&entity_type=researcher&start_date=2024-01-01&end_date=2024-12-31
+Authorization: Bearer <api_key>
+```
+
+**Response (200):**
+```json
+{
+  "decisions": [
+    {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "created_at": "2024-01-15T10:30:00Z",
+      "operation_type": "expense",
+      "description": "Alojamento em conferência",
+      "amount": 150.0,
+      "decision": "deductible",
+      "confidence": 0.95,
+      "risk_level": "low",
+      "source": "rule_engine"
+    }
+  ],
+  "limit": 100,
+  "offset": 0,
+  "total": 150
+}
+```
+
+**Query Parameters:**
+- `limit` (1-500): Number of results (default: 100)
+- `offset` (>=0): Pagination offset (default: 0)
+- `decision_type`: Filter by decision (deductible, non_deductible, partially_deductible, uncertain)
+- `entity_type`: Filter by entity (university, researcher, department, project)
+- `start_date`: ISO8601 datetime
+- `end_date`: ISO8601 datetime
+
+---
+
+### 3.8 GET /tax/statistics
+
+Get aggregate decision statistics.
+
+**Request:**
+```http
+GET /tax/statistics
+Authorization: Bearer <api_key>
+```
+
+**Response (200):**
+```json
+{
+  "total": 1234,
+  "by_decision": {
+    "deductible": 800,
+    "non_deductible": 200,
+    "partially_deductible": 100,
+    "uncertain": 134
+  },
+  "avg_confidence": 0.87
+}
+```
+
+---
+
+### 3.9 GET /tax/history/{decision_id}
+
+Get historical changes for a specific decision.
+
+**Request:**
+```http
+GET /tax/history/123e4567-e89b-12d3-a456-426614174000
+Authorization: Bearer <api_key>
+```
+
+**Response (200):**
+```json
+{
+  "decision_id": "123e4567-e89b-12d3-a456-426614174000",
+  "original": {
+    "created_at": "2024-01-15T10:30:00Z",
+    "decision": "deductible",
+    "confidence": 0.95,
+    "source": "rule_engine"
+  },
+  "history": [],
+  "related_actions": []
+}
+```
+
+---
+
+### 3.10 POST /tax/analyze/batch
+
+Batch tax analysis for multiple items.
+
+**Request:**
+```http
+POST /tax/analyze/batch
+Authorization: Bearer <api_key>
+Content-Type: application/json
+
+{
+  "items": [
+    {
+      "operation_type": "expense",
+      "description": "Alojamento em conferência",
+      "amount": 150.00,
+      "currency": "EUR",
+      "entity_type": "researcher",
+      "context": {
+        "project_type": "FCT",
+        "activity_type": "taxable",
+        "location": "PT"
+      }
+    }
+  ],
+  "stop_on_error": false
+}
+```
+
+**Response (200):**
+```json
+{
+  "total": 1,
+  "successful": 1,
+  "failed": 0,
+  "results": [ { ... } ],
+  "errors": []
+}
+```
+
+---
+
+### 3.11 GET /tax/export
+
+Export decisions to CSV or Excel.
+
+**Request:**
+```http
+GET /tax/export?format=csv&decision_type=deductible&entity_type=researcher
+Authorization: Bearer <api_key>
+```
+
+**Query Parameters:**
+- `format`: `csv` (default) or `excel`
+- `decision_type`: Optional filter
+- `entity_type`: Optional filter
+- `start_date`: Optional ISO8601
+- `end_date`: Optional ISO8601
+
+**Response:**
+- `text/csv` or Excel file with decisions.
+
+---
+
+### 3.12 GET /dashboard/summary
+
+Dashboard summary statistics.
+
+**Request:**
+```http
+GET /dashboard/summary
+Authorization: Bearer <api_key>
+```
+
+**Response (200):**
+```json
+{
+  "total_decisions": 1234,
+  "recent_activity": 45,
+  "top_entity_type": "researcher",
+  "risk_distribution": {
+    "low": 1000,
+    "medium": 200,
+    "high": 34
+  }
+}
+```
+
+---
+
+### 3.13 GET /dashboard/trends
+
+Decision trends over time (by day/week).
+
+**Request:**
+```http
+GET /dashboard/trends?period=weekly
+Authorization: Bearer <api_key>
+```
+
+**Response (200):**
+```json
+{
+  "period": "weekly",
+  "data": [
+    {
+      "date": "2024-01-07",
+      "total": 150,
+      "by_decision": {
+        "deductible": 100,
+        "non_deductible": 30,
+        "partially_deductible": 10,
+        "uncertain": 10
+      }
+    }
+  ]
+}
+```
+
+---
+
+### 3.14 GET /internal/benchmark
+
+Internal benchmark endpoint (performance testing).
+
+**Request:**
+```http
+GET /internal/benchmark?iterations=100
+Authorization: Bearer <api_key>
+```
+
+**Response (200):**
+```json
+{
+  "iterations": 100,
+  "avg_latency_ms": 250,
+  "p95_latency_ms": 400,
+  "total_time_seconds": 25.0
+}
+```
+
+---
+
+### 3.15 MCP Endpoints
+
+#### 3.15.1 POST /mcp/execute
+
+Execute an MCP tool.
+
+**Request:**
+```http
+POST /mcp/execute
+Content-Type: application/json
+
+{
+  "tool_name": "search_legislation",
+  "parameters": {"query": "IVA", "limit": 5}
+}
+```
+
+**Response (200):**
+```json
+{
+  "content": [
+    {"type": "text", "text": "..."}
+  ]
+}
+```
+
+#### 3.15.2 GET /mcp/tools
+
+List available MCP tools.
+
+**Request:**
+```http
+GET /mcp/tools
+```
+
+**Response (200):**
+```json
+{
+  "tools": [
+    {
+      "name": "search_legislation",
+      "description": "Search legislation",
+      "inputSchema": { ... }
+    }
+  ]
+}
+```
+
+#### 3.15.3 GET /mcp/resources
+
+List MCP resources.
+
+#### 3.15.4 GET /mcp/templates
+
+List MCP prompt templates.
+
+---
+
+### 3.16 Graph Endpoints
+
+#### 3.16.1 GET /graph/stats
+
+Get knowledge graph statistics.
+
+**Request:**
+```http
+GET /graph/stats
+Authorization: Bearer <api_key>
+```
+
+**Response (200):**
+```json
+{
+  "total_nodes": 1234,
+  "total_edges": 5678,
+  "gmif_distribution": {
+    "M1": 100,
+    "M2": 200
+  }
+}
+```
+
+#### 3.16.2 GET /graph/gmif-summary
+
+Get GMIF classification summary.
+
+**Request:**
+```http
+GET /graph/gmif-summary
+Authorization: Bearer <api_key>
+```
+
+**Response (200):**
+```json
+{
+  "summary": {
+    "M1": {"count": 100, "avg_confidence": 0.9},
+    "M2": {"count": 200, "avg_confidence": 0.8}
+  }
+}
+```
+
+#### 3.16.3 GET /graph/visualization/{type}
+
+Get graph visualization data (JSON for frontend).
+
+---
+
 ## 4. Schemas
 
 ### Input: TaxAnalysisInput

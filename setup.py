@@ -1,0 +1,42 @@
+#!/usr/bin/env python3
+"""
+Setup script for PT Tax Intelligence Layer.
+
+This enables 'pip install -e .' to make the app importable.
+"""
+
+from setuptools import setup, find_packages
+
+setup(
+    name="pt-tax-intelligence-layer",
+    version="1.0.0",
+    description="Backend decision engine for Portuguese tax law",
+    python_requires=">=3.10",
+    packages=find_packages(include=["app", "app.*", "tests", "tests.*"]),
+    install_requires=[
+        # Core dependencies (mirrors requirements.txt)
+        "fastapi==0.136.1",
+        "uvicorn[standard]==0.34.0",
+        "pydantic==2.11.0",
+        "pydantic-settings==2.6.1",
+        "python-dotenv==1.0.0",
+        "httpx==0.28.1",
+        "starlette==1.0.0",
+        "redis==5.0.1",
+        "asyncpg==0.29.0",
+        "sqlalchemy==2.0.25",
+        "alembic==1.13.1",
+        "prometheus-client==0.19.0",
+        "pytest==7.4.4",
+        "pytest-asyncio==0.23.3",
+        "chromadb>=0.6.0",
+        "sentence-transformers==2.2.2",
+        "psycopg2-binary==2.9.9",
+    ],
+    extras_require={
+        "dev": [
+            "ruff==0.1.9",
+            "coverage",
+        ]
+    },
+)

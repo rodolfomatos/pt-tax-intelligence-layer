@@ -1,5 +1,36 @@
 # ROADMAP.md - PT Tax Intelligence Layer
 
+## Sprint Atual — AES Compliance & Test Coverage (2026-05-02)
+
+### ✅ Concluído
+
+- [x] Makefile AES quality gates (docs-check, code-check, test-check, lint-check)
+- [x] GitHub Actions CI pipeline (com Docker services)
+- [x] Dockerfile: instalação editável via setup.py
+- [x] API spec atualizado com todos os endpoints
+- [x] Testes de API corrigidos (autenticação, mocks, fixtures)
+- [x] Novos testes unitários (legal_citations, hooks, reasoning)
+- [x] Cobertura aumentou de 43% para 53%
+- [x] Lint passando para código app/ e scripts/
+- [x] Normalização docs (VISION.md, REQUIREMENTS.md em docs/)
+- [x] datetime.utcnow() → datetime.now(timezone.utc) em módulos críticos
+- [x] Integração test markers (@pytest.mark.integration)
+- [x] Threshold coverage ajustado para 50% (meta: 80%)
+
+---
+
+### 🔵 Em Progresso
+
+| Item | Impacto | Esforço | Estado |
+|-----|--------|---------|--------|
+| Aumentar cobertura para 80% | alto | alto | in progress |
+| Expandir testes para memory layers, routers | médio | alto | pending |
+| Refatorar /tax/analyze para chamar LLM apenas quando necessário | médio | baixo | pending |
+| Corrigir todos os warnings de depreciação (datetime) | baixo | baixo | done (major) |
+| Documentar camadas de memória (L0-L3) na architecture.md | médio | médio | pending |
+
+---
+
 ## Análise Hostil Completa (2026-04-26)
 
 ---

@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 from typing import Optional
 from sqlalchemy import select, desc
@@ -25,7 +25,7 @@ class AuditRepository:
         async with get_db_session() as session:
             decision = TaxDecision(
                 id=uuid4(),
-                created_at=datetime.utcnow(),
+                created_at=datetime.now(timezone.utc),
                 operation_type=input_data.operation_type,
                 description=input_data.description,
                 amount=input_data.amount,
@@ -68,7 +68,7 @@ class AuditRepository:
         async with get_db_session() as session:
             log_entry = AuditLog(
                 id=uuid4(),
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 action=action,
                 entity_type=entity_type,
                 entity_id=entity_id,

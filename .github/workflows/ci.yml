@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: tax_intelligence
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tax_intelligence
+      REDIS_URL: redis://localhost:6379/0
+      PTDATA_API_URL: https://api.ptdata.org/mcp
+      PTDATA_API_KEY: dummy
+      OPENAI_API_KEY: dummy
+      API_KEY: test-api-key
+      LOG_LEVEL: INFO
+      USE_IAEDU: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Create virtual environment
+        run: |
+          python -m venv venv
+
+      - name: Install dependencies
+        run: |
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -e .
+
+      - name: Lint code
+        run: |
+          source venv/bin/activate
+          make lint
+
+      - name: Run tests with coverage
+        run: |
+          source venv/bin/activate
+          make test
+
+      - name: Check documentation
+        run: |
+          source venv/bin/activate
+          make docs-check
+
+      - name: Run full quality gate
+        run: |
+          source venv/bin/activate
+          make check

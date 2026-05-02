@@ -10,7 +10,7 @@ Allows external systems to react to tax decisions:
 import logging
 from typing import Optional, List, Dict, Callable
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timezone
 from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
@@ -84,7 +84,7 @@ class SystemHooks:
         """Trigger an event to all registered hooks."""
         event = WebhookEvent(
             event_type=event_type,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             decision_id=decision_id,
             payload=payload or {},
         )

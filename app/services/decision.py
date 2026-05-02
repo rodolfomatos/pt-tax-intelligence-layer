@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from app.models import TaxAnalysisInput, TaxAnalysisOutput
 
@@ -58,7 +58,7 @@ class DecisionAggregator:
             assumptions=[input_data.model_dump_json()],
             required_followup=["Tentar novamente mais tarde"],
             risk_level="high",
-            legal_version_timestamp=datetime.utcnow().isoformat() + "Z",
+            legal_version_timestamp=datetime.now(timezone.utc).isoformat(),
         )
     
     def calculate_confidence(

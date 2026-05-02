@@ -45,7 +45,6 @@ class MCPToolExecutor:
     async def _search_legislation(self, params: Dict[str, Any]) -> Dict:
         query = params.get("query", "")
         code = params.get("code")
-        article = params.get("article")
         limit = params.get("limit", 10)
         
         ptdata = await get_ptdata_client()

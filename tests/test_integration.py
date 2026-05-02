@@ -11,6 +11,7 @@ from app.main import app
 HEADERS = {"X-API-Key": "test-api-key"}
 
 
+@pytest.mark.integration
 class TestHealthEndpoint:
     """Tests for /health endpoint."""
 
@@ -33,6 +34,7 @@ class TestHealthEndpoint:
             assert "dependencies" in data
 
 
+@pytest.mark.integration
 class TestAnalyzeEndpoint:
     """Tests for /tax/analyze endpoint."""
 
@@ -107,8 +109,9 @@ class TestValidateEndpoint:
             assert "valid" in data
 
 
+@pytest.mark.integration
 class TestMcpEndpoints:
-    """Tests for MCP endpoints."""
+    """Integration tests for MCP endpoints."""
 
     @pytest.mark.asyncio
     async def test_mcp_list_tools(self):
@@ -130,6 +133,7 @@ class TestMcpEndpoints:
             assert response.status_code == 404
 
 
+@pytest.mark.integration
 class TestGraphEndpoints:
     """Tests for graph endpoints."""
 

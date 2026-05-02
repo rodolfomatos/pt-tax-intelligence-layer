@@ -12,15 +12,17 @@ ENV VIRTUAL_ENV=/app/venv
 RUN python -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-# Install Python dependencies
+# Copy setup and install package
+COPY setup.py .
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -e .
 
 # Copy application
 COPY app/ ./app/
 COPY scripts/ ./scripts/
 COPY docs/ ./docs/
 COPY pytest.ini .
+COPY setup.py .
 
 ENV PYTHONPATH=/app
 ENV PYTHONDONTWRITEBYTECODE=1

@@ -6,7 +6,7 @@ Provides queries for the graph with temporal validity.
 
 import logging
 from typing import Optional, List, Dict
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import select, or_
 from app.data.memory.graph.models import GraphNode, GraphEdge, Contradiction
 from app.database.session import get_db_session
@@ -51,7 +51,7 @@ class GraphQuery:
         as_of: Optional[datetime] = None,
     ) -> List[Dict]:
         """Get nodes that were valid at a specific time."""
-        as_of = as_of or datetime.utcnow()
+        as_of = as_of or datetime.now(timezone.utc)
 
         async with get_db_session() as session:
             query = select(GraphNode).where(

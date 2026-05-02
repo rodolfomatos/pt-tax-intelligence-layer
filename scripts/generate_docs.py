@@ -93,8 +93,6 @@ def update_api_spec():
     if not spec_path.exists():
         return
     
-    content = spec_path.read_text()
-    
     # Check if endpoints were found
     if endpoints:
         print(f"Found {len(endpoints)} endpoints")

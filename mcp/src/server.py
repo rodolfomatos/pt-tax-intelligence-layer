@@ -13,7 +13,6 @@ from typing import Any, Optional
 
 try:
     from mcp.server import Server
-    from mcp.server.stdio import stdio_server
     from mcp.types import Tool, TextContent
     import httpx
 except ImportError:

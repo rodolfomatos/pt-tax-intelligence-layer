@@ -1,7 +1,7 @@
 import logging
 import json
 from typing import Optional, List, Dict
-from datetime import datetime
+from datetime import datetime, timezone
 import chromadb
 from chromadb.config import Settings
 from app.config import get_settings
@@ -55,7 +55,7 @@ class SemanticMemory:
             documents=[text],
             metadatas=[{
                 "decision": decision,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "legal_basis": json.dumps(legal_basis),
                 **metadata
             }]

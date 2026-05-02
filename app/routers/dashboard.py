@@ -5,7 +5,7 @@ Contains endpoints for dashboard summary and trends.
 """
 
 from fastapi import APIRouter, Query, HTTPException
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from sqlalchemy import select, func
 
 from app.database.audit import get_audit_repository
@@ -30,7 +30,7 @@ async def get_dashboard_summary():
         stats = await audit.get_statistics()
 
         # Get recent decisions (last 30 days)
-        thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+        thirty_days_ago = datetime.now(timezone.utc) - timedelta(days=30)
         recent = await audit.get_decisions(
             limit=100,
             offset=0,
@@ -49,7 +49,7 @@ async def get_dashboard_summary():
                 "total": len(recent),
                 "by_decision": recent_by_type,
             },
-            "generated_at": datetime.utcnow().isoformat(),
+            "generated_at": datetime.now(timezone.utc).isoformat(),
         }
     except Exception as e:
         logger.error(f"Failed to get dashboard summary: {e}")
@@ -71,7 +71,7 @@ async def get_dashboard_trends(
     Returns trend data for charting.
     """
     try:
-        start_date = datetime.utcnow() - timedelta(days=days)
+        start_date = datetime.now(timezone.utc) - timedelta(days=days)
 
         async with get_db_session() as session:
             # Group by date

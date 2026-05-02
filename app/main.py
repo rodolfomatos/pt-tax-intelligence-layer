@@ -17,6 +17,7 @@ from app.models import HealthResponse
 from app.database.session import init_db, close_db
 from app.middleware.rate_limit import RateLimitMiddleware
 from app.middleware.api_auth import APIKeyMiddleware
+from app.middleware.metrics import setup_metrics
 from app.data.memory.graph.visualization import router as graph_viz_router
 from app.routers import tax, decisions, search, graph, dashboard, mcp, internal
 
@@ -65,8 +66,6 @@ app = FastAPI(
 )
 
 # Add middleware
-from app.middleware.metrics import setup_metrics
-
 setup_metrics(app)
 
 app.add_middleware(

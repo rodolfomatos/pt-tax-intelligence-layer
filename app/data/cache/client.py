@@ -1,7 +1,7 @@
 import json
 import logging
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import redis.asyncio as redis
 from app.config import get_settings
 
@@ -148,7 +148,7 @@ class CacheClient:
         await self.invalidate_by_pattern("article:*")
         await self.invalidate_by_pattern("search:*")
         
-        await self.set(self._version_key, {"version": new_version, "updated": datetime.utcnow().isoformat()})
+        await self.set(self._version_key, {"version": new_version, "updated": datetime.now(timezone.utc).isoformat()})
     
     async def get_legal_version(self) -> Optional[str]:
         """Get cached legal version."""

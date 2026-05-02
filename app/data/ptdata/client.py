@@ -35,7 +35,7 @@ class PTDataClient:
             "id": id,
         }
         try:
-            response = await self.client.post(self.mcp_url, json=payload)
+            response = await self.client.post(self.mcp_url, json=payload, timeout=10.0)
             response.raise_for_status()
             result = response.json()
             if "error" in result:
@@ -50,6 +50,9 @@ class PTDataClient:
                 except json.JSONDecodeError:
                     return {"text": text}
             return result.get("result", {})
+        except httpx.TimeoutException:
+            logger.warning(f"ptdata MCP timeout: {method}")
+            return {}
         except httpx.HTTPError as e:
             logger.warning(f"ptdata MCP call failed: {e}")
             return {}
@@ -101,12 +104,13 @@ class PTDataClient:
     async def health_check(self) -> bool:
         """Check if ptdata API is available."""
         try:
-            response = await self.client.post(
-                self.mcp_url,
-                json={"jsonrpc": "2.0", "method": "tools/list", "params": {}, "id": 1},
-            )
-            return response.status_code == 200
-        except httpx.HTTPError:
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                response = await client.post(
+                    self.mcp_url,
+                    json={"jsonrpc": "2.0", "method": "tools/list", "params": {}, "id": 1},
+                )
+                return response.status_code == 200
+        except (httpx.HTTPError, Exception):
             return False
 
 
