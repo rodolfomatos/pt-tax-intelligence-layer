@@ -2,7 +2,7 @@
 
 import os
 from alembic import context
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 from sqlalchemy.ext.asyncio import create_async_engine
 
 # Alembic Config object
@@ -13,15 +13,18 @@ from app.database.models import Base
 from app.data.memory.graph.models import Base as GraphBase
 target_metadata = Base.metadata
 
-# Add graph models
+# Merge graph models into target_metadata
+GraphBase.metadata.tables  # force load
 for table in GraphBase.metadata.tables.values():
-    if table not in target_metadata.tables.values():
-        target_metadata.append_table(table)
+    if table.name not in target_metadata.tables:
+        table.tometadata(target_metadata)
 
 
 def get_url():
     """Get database URL from environment or config."""
-    return os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/tax_intelligence")
+    # Use sync URL for migrations
+    url = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/tax_intelligence")
+    return url
 
 
 def run_migrations_offline():
@@ -41,9 +44,9 @@ def run_migrations_offline():
 def run_migrations_online():
     """Run migrations in 'online' mode."""
     url = get_url()
-    
-    connectable = create_async_engine(
-        url.replace("postgresql://", "postgresql+asyncpg://"),
+    connectable = engine_from_config(
+        config.get_section(config.config_ini_section),
+        prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
     

@@ -5,6 +5,7 @@ Provides queries for the graph with temporal validity.
 """
 
 import logging
+import threading
 from typing import Optional, List, Dict
 from datetime import datetime, timezone
 from sqlalchemy import select, or_
@@ -82,30 +83,27 @@ class GraphQuery:
             if not entity:
                 return []
 
-            # Get edges from entity
+            # Get edges with target nodes joined (eager load)
+            from sqlalchemy.orm import selectinload
             edges_result = await session.execute(
-                select(GraphEdge).where(GraphEdge.source_id == entity.id)
+                select(GraphEdge)
+                .options(selectinload(GraphEdge.target))
+                .where(GraphEdge.source_id == entity.id)
             )
             edges = edges_result.scalars().all()
 
-            # Get target decision nodes
             timeline = []
             for edge in edges:
-                target_result = await session.execute(
-                    select(GraphNode).where(GraphNode.id == edge.target_id)
-                )
-                target = target_result.scalar_one_or_none()
-
-                if target:
+                if edge.target:
                     timeline.append(
                         {
-                            "node": self._node_to_dict(target),
+                            "node": self._node_to_dict(edge.target),
                             "relation": edge.relation_type,
                             "timestamp": edge.created_at.isoformat(),
                         }
                     )
 
-            # Sort by timestamp
+            # Sort by timestamp descending
             timeline.sort(key=lambda x: x["timestamp"], reverse=True)
             return timeline
 
@@ -277,10 +275,13 @@ class GraphQuery:
 
 # Singleton
 _query: Optional[GraphQuery] = None
+_query_lock = threading.Lock()
 
 
 def get_graph_query() -> GraphQuery:
     global _query
     if _query is None:
-        _query = GraphQuery()
+        with _query_lock:
+            if _query is None:  # double-checked locking
+                _query = GraphQuery()
     return _query

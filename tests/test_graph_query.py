@@ -230,6 +230,8 @@ async def test_timeline_entity_found(mock_get_db_session, mock_gmif_classifier):
         confidence=0.9,
         created_at=now - timedelta(days=2)
     )
+    edge1.target = decision1  # Set relationship for selectinload
+
     edge2 = GraphEdge(
         id="edge2",
         source_id=entity.id,
@@ -238,6 +240,7 @@ async def test_timeline_entity_found(mock_get_db_session, mock_gmif_classifier):
         confidence=0.8,
         created_at=now - timedelta(days=1)
     )
+    edge2.target = decision2  # Set relationship for selectinload
     
     # Setup execute side effects
     entity_result = MagicMock(scalar_one_or_none=MagicMock(return_value=entity))

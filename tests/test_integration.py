@@ -11,6 +11,41 @@ from app.main import app
 HEADERS = {"X-API-Key": "test-api-key"}
 
 
+@pytest.fixture(autouse=True)
+def mock_ptdata_integration(monkeypatch):
+    """Mock ptdata client for integration tests to avoid external dependencies."""
+    from app.data.ptdata.client import PTDataClient
+
+    async def mock_search_legislation(self, q, code=None, limit=10):
+        return [
+            {
+                "code": "CIVA",
+                "article": "20º",
+                "excerpt": f"Resultado para {q}",
+            }
+        ]
+
+    async def mock_get_article(self, code, article):
+        return {
+            "code": code,
+            "article": article,
+            "title": "Artigo de teste",
+            "content": "Conteúdo do artigo..."
+        }
+
+    async def mock_health_check(self):
+        return True
+
+    async def mock_close(self):
+        pass
+
+    # Apply mocks
+    monkeypatch.setattr(PTDataClient, "search_legislation", mock_search_legislation)
+    monkeypatch.setattr(PTDataClient, "get_article", mock_get_article)
+    monkeypatch.setattr(PTDataClient, "health_check", mock_health_check)
+    monkeypatch.setattr(PTDataClient, "close", mock_close)
+
+
 @pytest.mark.integration
 class TestHealthEndpoint:
     """Tests for /health endpoint."""

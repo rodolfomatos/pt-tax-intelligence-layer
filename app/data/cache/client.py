@@ -1,5 +1,6 @@
 import json
 import logging
+import threading
 from typing import Optional
 from datetime import datetime, timezone
 import redis.asyncio as redis
@@ -166,10 +167,13 @@ class CacheClient:
 
 
 _cache: Optional[CacheClient] = None
+_cache_lock = threading.Lock()
 
 
 async def get_cache_client() -> CacheClient:
     global _cache
     if _cache is None:
-        _cache = CacheClient()
+        with _cache_lock:
+            if _cache is None:  # double-checked locking
+                _cache = CacheClient()
     return _cache

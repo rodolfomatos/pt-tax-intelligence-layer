@@ -23,6 +23,24 @@ from app.routers import tax, decisions, search, graph, dashboard, mcp, internal
 
 settings = get_settings()
 
+# Initialize Sentry if DSN configured
+if settings.sentry_dsn:
+    import sentry_sdk
+    from sentry_sdk.integrations.fastapi import FastApiIntegration
+    from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+    sentry_sdk.init(
+        dsn=settings.sentry_dsn,
+        integrations=[
+            FastApiIntegration(),
+            SqlalchemyIntegration(),
+        ],
+        traces_sample_rate=settings.sentry_traces_sample_rate or 0.1,
+        environment=settings.environment or "production",
+        debug=settings.log_level == "DEBUG",
+    )
+    logger = logging.getLogger(__name__)
+    logger.info("Sentry initialized")
+
 if settings.log_level == "DEBUG":
     logging.basicConfig(
         level=settings.log_level,
@@ -48,12 +66,16 @@ async def lifespan(app: FastAPI):
     logger.info("PT Tax Intelligence Layer shutting down...")
     from app.data.ptdata.client import get_ptdata_client
     from app.data.cache.client import get_cache_client
+    from app.middleware.rate_limit_backends import get_rate_limit_backend
 
     ptdata = await get_ptdata_client()
     await ptdata.close()
 
     cache = await get_cache_client()
     await cache.close()
+
+    rate_limit_backend = await get_rate_limit_backend()
+    await rate_limit_backend.close()
 
     await close_db()
 

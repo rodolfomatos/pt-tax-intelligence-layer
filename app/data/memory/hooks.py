@@ -8,6 +8,7 @@ Inspirado em Claude-Mem:
 """
 
 import logging
+import threading
 from typing import Callable
 from datetime import datetime, timezone
 from functools import wraps
@@ -21,22 +22,27 @@ _hooks = {
     "on_search_executed": [],
     "on_error": [],
 }
+_hooks_lock = threading.Lock()
 
 
 def register_hook(hook_type: str, func: Callable):
     """Registar um hook."""
-    if hook_type not in _hooks:
-        _hooks[hook_type] = []
-    _hooks[hook_type].append(func)
-    logger.info(f"Registered hook: {hook_type} -> {func.__name__}")
+    with _hooks_lock:
+        if hook_type not in _hooks:
+            _hooks[hook_type] = []
+        _hooks[hook_type].append(func)
+        logger.info(f"Registered hook: {hook_type} -> {func.__name__}")
 
 
 def trigger_hook(hook_type: str, **kwargs):
     """Disparar hooks registados."""
-    if hook_type not in _hooks:
-        return
+    with _hooks_lock:
+        if hook_type not in _hooks:
+            return
+        
+        hooks = _hooks[hook_type].copy()  # copy to avoid modification during iteration
     
-    for func in _hooks[hook_type]:
+    for func in hooks:
         try:
             func(**kwargs)
         except Exception as e:

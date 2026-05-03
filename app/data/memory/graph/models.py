@@ -9,7 +9,7 @@ from typing import Optional
 from uuid import uuid4
 from sqlalchemy import String, Text, DateTime, Float, Index, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase):
@@ -54,6 +54,19 @@ class GraphNode(Base):
         Index("ix_graph_nodes_external_id", "external_id"),
     )
 
+    # Relationships for graph traversal
+    outgoing_edges: Mapped[list["GraphEdge"]] = relationship(
+        "GraphEdge",
+        foreign_keys="GraphEdge.source_id",
+        back_populates="source",
+        cascade="all, delete-orphan",
+    )
+    incoming_edges: Mapped[list["GraphEdge"]] = relationship(
+        "GraphEdge",
+        foreign_keys="GraphEdge.target_id",
+        back_populates="target",
+    )
+
 
 class GraphEdge(Base):
     """
@@ -89,6 +102,18 @@ class GraphEdge(Base):
     # Temporal validity
     valid_from: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     valid_to: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    
+    # Relationships
+    source: Mapped["GraphNode"] = relationship(
+        "GraphNode",
+        foreign_keys=[source_id],
+        back_populates="outgoing_edges",
+    )
+    target: Mapped["GraphNode"] = relationship(
+        "GraphNode",
+        foreign_keys=[target_id],
+        back_populates="incoming_edges",
+    )
     
     __table_args__ = (
         Index("ix_graph_edges_source_target", "source_id", "target_id"),

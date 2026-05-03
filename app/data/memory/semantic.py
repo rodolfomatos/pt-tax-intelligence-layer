@@ -1,5 +1,6 @@
 import logging
 import json
+import threading
 from typing import Optional, List, Dict
 from datetime import datetime, timezone
 import chromadb
@@ -109,10 +110,13 @@ class SemanticMemory:
 
 
 _memory: Optional[SemanticMemory] = None
+_memory_lock = threading.Lock()
 
 
 def get_semantic_memory() -> SemanticMemory:
     global _memory
     if _memory is None:
-        _memory = SemanticMemory()
+        with _memory_lock:
+            if _memory is None:  # double-checked locking
+                _memory = SemanticMemory()
     return _memory

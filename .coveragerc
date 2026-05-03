@@ -1,0 +1,27 @@
+[run]
+source = app
+omit = 
+    app/data/iaedu/client.py
+    app/data/mcp/executor.py
+    app/data/mcp/tools.py
+    app/data/memory/graph/builder.py
+    app/data/memory/graph/gmif.py
+    app/data/memory/graph/visualization.py
+    app/data/memory/hooks.py
+    app/data/memory/layers.py
+    */migrations/*
+    */alembic/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    pass
+    \.\.#
+
+[html]
+directory = htmlcov

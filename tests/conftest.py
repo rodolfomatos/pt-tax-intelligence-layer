@@ -209,12 +209,3 @@ def mock_audit_repo(monkeypatch):
     from app.database.audit import AuditRepository
     repo = AsyncMock(spec=AuditRepository)
     return repo
-
-
-@pytest.fixture(autouse=True)
-def reset_rate_limit_caches():
-    """Clear rate limit caches before each test to avoid accumulation."""
-    global _ratelimit_instance
-    if _ratelimit_instance is not None:
-        _ratelimit_instance._minute_cache.clear()
-        _ratelimit_instance._hour_cache.clear()

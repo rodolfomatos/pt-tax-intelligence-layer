@@ -32,11 +32,17 @@ class Settings(BaseSettings):
     api_key: str = Field(default="", alias="API_KEY")
 
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
-    cache_ttl_seconds: int = Field(default=86400, alias="CACHE_TTL_SECONDS")
+    cache_ttl_seconds: int = Field(default=3600, alias="CACHE_TTL_SECONDS")
 
     rate_limit_per_minute: int = Field(default=60, alias="RATE_LIMIT_PER_MINUTE")
     rate_limit_per_hour: int = Field(default=1000, alias="RATE_LIMIT_PER_HOUR")
     rate_limit_burst: int = Field(default=10, alias="RATE_LIMIT_BURST")
+    rate_limit_backend: str = Field(default="memory", alias="RATE_LIMIT_BACKEND")
+
+    # APM
+    sentry_dsn: str = Field(default="", alias="SENTRY_DSN")
+    sentry_traces_sample_rate: float = Field(default=0.1, alias="SENTRY_TRACES_SAMPLE_RATE")
+    environment: str = Field(default="production", alias="ENVIRONMENT")
 
     chroma_persist_dir: str = Field(default="/data/chroma", alias="CHROMA_PERSIST_DIR")
 
@@ -55,6 +61,16 @@ class Settings(BaseSettings):
             v_clean = v.split()[0].strip().lower()
             return v_clean in ("true", "1", "yes", "on", "y")
         return bool(v)
+
+    @field_validator("api_key", "database_url", "redis_url")
+    @classmethod
+    def _validate_critical_env_vars(cls, v, info):
+        """Ensure critical env vars are set in production."""
+        # Only enforce in production environment
+        env = info.data.get("environment", "production")
+        if env == "production" and not v:
+            raise ValueError(f"{info.field_name} must be set in production")
+        return v
 
 
 @lru_cache

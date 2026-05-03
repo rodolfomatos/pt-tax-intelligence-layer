@@ -1,5 +1,6 @@
 import json
 import logging
+import threading
 from typing import Optional
 import httpx
 from app.config import get_settings
@@ -115,10 +116,13 @@ class PTDataClient:
 
 
 _client: Optional[PTDataClient] = None
+_client_lock = threading.Lock()
 
 
 async def get_ptdata_client() -> PTDataClient:
     global _client
     if _client is None:
-        _client = PTDataClient()
+        with _client_lock:
+            if _client is None:  # double-checked locking
+                _client = PTDataClient()
     return _client
