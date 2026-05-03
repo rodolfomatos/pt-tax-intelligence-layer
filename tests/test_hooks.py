@@ -5,6 +5,7 @@ Tests the hook system for event-driven actions (webhooks, alerts, etc).
 """
 
 import pytest
+from unittest.mock import MagicMock
 from app.services.hooks import (
     EventType,
     SystemHooks,
@@ -130,3 +131,75 @@ class TestSystemHooks:
         assert webhooks[0]["url"] == "http://a.com"
         assert webhooks[0]["enabled"] is True
         assert webhooks[1]["enabled"] is False
+
+
+@pytest.mark.asyncio
+async def test_call_webhook_with_secret(monkeypatch):
+    """Should include signature header when secret provided."""
+    import hmac
+    import hashlib
+    import json
+
+    hooks = SystemHooks()
+    webhook = {
+        "url": "http://example.com/hook",
+        "events": [EventType.DECISION_HIGH_RISK],
+        "secret": "supersecret",
+        "enabled": True,
+    }
+    event = MagicMock()
+    event.model_dump.return_value = {"event_type": "decision.high_risk", "payload": {}}
+
+    # Mock httpx.AsyncClient to capture request
+    class MockResponse:
+        status_code = 200
+
+    class MockClient:
+        def __init__(self, timeout=None):
+            pass
+        async def __aenter__(self):
+            return self
+        async def __aexit__(self, exc_type, exc, tb):
+            pass
+        async def post(self, url, json=None, headers=None):
+            MockClient.last_headers = headers
+            return MockResponse()
+
+    import httpx
+    monkeypatch.setattr(httpx, "AsyncClient", MockClient)
+
+    await hooks._call_webhook(webhook, event)
+
+    # Verify signature header exists and is correct
+    assert "X-Webhook-Signature" in MockClient.last_headers
+    sig = MockClient.last_headers["X-Webhook-Signature"]
+    # Recalculate expected signature
+    payload = json.dumps(event.model_dump()).encode()
+    expected = hmac.new(b"supersecret", payload, hashlib.sha256).hexdigest()
+    assert sig == expected
+
+
+@pytest.mark.asyncio
+async def test_trigger_webhook_error_handled(monkeypatch):
+    """Should log error if webhook call fails."""
+    hooks = SystemHooks()
+    hooks.register_webhook("http://bad.example.com", [EventType.DECISION_HIGH_RISK])
+
+    class FailingClient:
+        def __init__(self, timeout=None):
+            pass
+        async def __aenter__(self):
+            return self
+        async def __aexit__(self, exc_type, exc, tb):
+            pass
+        async def post(self, url, json=None, headers=None):
+            raise Exception("Connection error")
+
+    import httpx
+    monkeypatch.setattr(httpx, "AsyncClient", FailingClient)
+
+    # Should not raise, should log error
+    event_payload = {"test": 1}
+    await hooks.trigger(EventType.DECISION_HIGH_RISK, payload=event_payload)
+    # If we get here, exception was handled
+

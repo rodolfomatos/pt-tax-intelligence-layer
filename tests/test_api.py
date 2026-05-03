@@ -88,6 +88,8 @@ class TestSearchEndpoint:
         data = response.json()
         assert "results" in data
         assert "query" in data
+    
+
 
 
 class TestArticleEndpoint:
@@ -98,6 +100,8 @@ class TestArticleEndpoint:
         """Non-existent article should return 404."""
         response = await async_client.get("/tax/article/CIVA/999")
         assert response.status_code == 404
+    
+
 
 
 class TestValidateEndpoint:
@@ -158,3 +162,42 @@ class TestDecisionsEndpoint:
         response = await async_client.get("/tax/decisions")
         # Either 200 with data or 500 if DB unavailable (expected in test)
         assert response.status_code in [200, 500]
+
+
+class TestErrorHandling:
+    """Tests for error handling in search and article endpoints."""
+    
+    @pytest.mark.asyncio
+    async def test_search_backend_error(self, async_client, monkeypatch):
+        """Search should return 500 when ptdata raises an exception."""
+        class FailingPTData:
+            async def search_legislation(self, *args, **kwargs):
+                raise Exception("Search service unavailable")
+            async def get_article(self, *args, **kwargs):
+                return {"code": "CIVA", "article": "20º", "title": "Test", "content": "Test"}
+            async def health_check(self):
+                return True
+            async def close(self):
+                pass
+        # Patch the get_ptdata_client function in the search router module
+        monkeypatch.setattr("app.routers.search.get_ptdata_client", lambda: FailingPTData())
+        
+        response = await async_client.get("/tax/search?q=test")
+        assert response.status_code == 500
+    
+    @pytest.mark.asyncio
+    async def test_article_backend_error(self, async_client, monkeypatch):
+        """Article retrieval should return 500 when ptdata raises an exception."""
+        class FailingPTData:
+            async def search_legislation(self, *args, **kwargs):
+                return [{"code": "CIVA", "article": "20º", "excerpt": "test"}]
+            async def get_article(self, *args, **kwargs):
+                raise Exception("Service unavailable")
+            async def health_check(self):
+                return True
+            async def close(self):
+                pass
+        monkeypatch.setattr("app.routers.search.get_ptdata_client", lambda: FailingPTData())
+        
+        response = await async_client.get("/tax/article/CIVA/20")
+        assert response.status_code == 500

@@ -22,16 +22,16 @@ IMPORTANT RULES:
 5. Portuguese tax codes: CIVA (IVA/VAT), CIRC (IRC/Corporate Tax), CIRS (IRS/Personal Tax)
 
 Your response MUST be in Portuguese and follow this JSON format exactly:
-{
+{{
   "decision": "deductible" | "non_deductible" | "partially_deductible" | "uncertain",
   "confidence": 0.0-1.0,
-  "legal_basis": [{"code": "CIVA|CIRC|CIRS", "article": "Artigo Xº", "excerpt": "..."}],
+  "legal_basis": [{{"code": "CIVA|CIRC|CIRS", "article": "Artigo Xº", "excerpt": "..."}}],
   "explanation": "explanation in Portuguese",
   "risks": ["risk1", "risk2"],
   "assumptions": ["assumption1"],
   "required_followup": ["question1"],
   "risk_level": "low" | "medium" | "high"
-}
+}}
 
 Always include the disclaimer: "Esta é uma avaliação automática preliminar. Valide com os serviços financeiros ou jurídicos."
 
@@ -53,13 +53,6 @@ class LLMReasoning:
         input_data: TaxAnalysisInput,
     ) -> Optional[TaxAnalysisOutput]:
         """Use LLM to analyze tax operation."""
-        
-        # Get memory context (L0 + L1)
-        memory_context = self.memory_layers.build_context(
-            layer="L1",
-            entity_type=input_data.entity_type,
-            project_type=input_data.context.project_type,
-        )
         
         # Search for similar past decisions (L3 deep search)
         similar_decisions = self.memory_layers.get_l3_deep_search(
@@ -95,13 +88,8 @@ class LLMReasoning:
                 legal_version_timestamp="2024-01-01T00:00:00Z",
             )
         
-        # Update system prompt with memory context
-        enhanced_system_prompt = LLM_SYSTEM_PROMPT.format(
-            memory_context=memory_context
-        )
-        
         if self.use_iaedu and settings.iaedu_api_key:
-            return await self._analyze_with_iaedu(input_data, results, enhanced_system_prompt)
+            return await self._analyze_with_iaedu(input_data, results)
         else:
             return await self._analyze_fallback(input_data, results)
     

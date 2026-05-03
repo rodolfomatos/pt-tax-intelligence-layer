@@ -8,6 +8,17 @@ from unittest.mock import AsyncMock
 from httpx import AsyncClient, ASGITransport
 from app.models import TaxAnalysisInput, Context
 
+# Global to capture RateLimitMiddleware instance for cache clearing
+_ratelimit_instance = None
+_original_ratelimit_init = None
+
+
+def _patched_ratelimit_init(self, app, requests_per_minute=60, requests_per_hour=1000, burst_limit=10):
+    """Patch to capture the RateLimitMiddleware instance when it's created."""
+    global _ratelimit_instance
+    _ratelimit_instance = self
+    _original_ratelimit_init(self, app, requests_per_minute, requests_per_hour, burst_limit)
+
 
 def pytest_configure(config):
     """Set test environment variables before any app imports."""
@@ -18,6 +29,15 @@ def pytest_configure(config):
     os.environ.setdefault("PTDATA_API_KEY", "dummy")
     os.environ.setdefault("LOG_LEVEL", "INFO")
     os.environ.setdefault("USE_IAEDU", "false")
+    # Increase rate limits for test suite to avoid hitting limits
+    os.environ.setdefault("RATE_LIMIT_PER_MINUTE", "100000")
+    os.environ.setdefault("RATE_LIMIT_PER_HOUR", "1000000")
+    
+    # Patch RateLimitMiddleware.__init__ to capture the instance for cache clearing
+    global _original_ratelimit_init
+    from app.middleware.rate_limit import RateLimitMiddleware
+    _original_ratelimit_init = RateLimitMiddleware.__init__
+    RateLimitMiddleware.__init__ = _patched_ratelimit_init
 
 
 @pytest.fixture
@@ -189,3 +209,12 @@ def mock_audit_repo(monkeypatch):
     from app.database.audit import AuditRepository
     repo = AsyncMock(spec=AuditRepository)
     return repo
+
+
+@pytest.fixture(autouse=True)
+def reset_rate_limit_caches():
+    """Clear rate limit caches before each test to avoid accumulation."""
+    global _ratelimit_instance
+    if _ratelimit_instance is not None:
+        _ratelimit_instance._minute_cache.clear()
+        _ratelimit_instance._hour_cache.clear()

@@ -80,6 +80,7 @@ class TestAnalyzeEndpoint:
             assert "confidence" in data
 
 
+@pytest.mark.integration
 class TestValidateEndpoint:
     """Tests for /tax/validate endpoint."""
 

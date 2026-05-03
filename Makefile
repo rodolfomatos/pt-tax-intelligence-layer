@@ -94,8 +94,8 @@ code-check:
 	@echo "✅ Code structure check passed"
 
 test-check:
-	@# Run tests with coverage threshold (currently 50%, aiming for 80%)
-	@$(PYTHON) -m pytest tests/ -m "not integration" --cov=app --cov-fail-under=50 --cov-report=term-missing
+	@# Run tests with coverage threshold (80%)
+	@$(PYTHON) -m pytest tests/ -m "not integration" --cov=app --cov-fail-under=80 --cov-report=term-missing
 
 lint-check:
 	@# Run linter in non-fix mode (exclude generated code)
